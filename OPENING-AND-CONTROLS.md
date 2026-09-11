@@ -1,0 +1,11 @@
+# Opening and controls
+
+The game retains two player slots and accepts one keyboard and up to two connected controllers. Automatic assignment uses the single controller for P2 in two-player mode (keyboard controls P1), or one controller per player when two are connected. Solo mode uses the first controller. The title's T settings screen supports automatic assignment, controller 1, controller 2, or none, plus deadzone and inverted vertical axis. P2's optional keys on the same keyboard remain IJKL and U/O/P.
+
+After character selection, Map 1 opens with the Traditional Chinese prologue in `opening.js`: Shin and his army surround Kenshiro, seven strikes, Julia's coerced answer, departure, solitude, black screen, and the desert journey. It uses the existing character and background artwork with staged movement and captions. Enter, Space, Z, or a controller button advances a beat; Q skips to gameplay. Completion starts the existing first campaign stage with the selected heroes.
+
+The presentation now follows a short arcade opening: actors enter and leave the playfield, attacks have windup/contact/recovery, seven impacts have sound and flash cues, and dialogue is shown only at key moments. The full adapted script remains in OPENING_BEATS; OPENING_CAPTIONS contains the concise on-screen dialogue. The pacing reference is the [Double Dragon opening description](https://www.hardcoregaming101.net/double-dragon/), retaining this game's story and art.
+
+`fighter-select.js` provides the arcade selection screen with large animated fighters, visible P1/P2 ownership, ready indicators, and a confirmation progress bar. Enter confirms P1. The live `animations.html` preview includes every playable action at normal or half speed. Rei and Toki each use 24 new poses in their v3 sheets; Ken retains the original S1/S2 images, with a new combined jump-kick sequence. Jump poses follow vertical velocity, attack poses follow contact/recovery windows, and specials cycle through their full duration.
+
+Automated checks cover sparse controller indices, independent button edges, disconnect/reconnect, each opening beat rendering, seven strikes, frozen gameplay during the opening, completion and skipping. Physical controller behavior still requires testing with connected devices.

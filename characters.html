@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wasteland Brawler — Character Gallery</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#171e26;color:#e9d6af;font:16px system-ui,sans-serif;padding:32px}header{max-width:1200px;margin:auto}h1{margin:0 0 8px;font-size:30px}p{color:#b2bcc5}nav{display:flex;gap:8px;flex-wrap:wrap;margin:24px 0}button,a{font:inherit;border:1px solid #647383;border-radius:6px;background:#253240;color:#f4e5c9;padding:8px 14px;cursor:pointer;text-decoration:none}button[aria-pressed=true]{background:#d4a75d;color:#171e26}main{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;max-width:1200px;margin:auto}article{border:1px solid #485461;border-radius:10px;overflow:hidden;background:#263746}h2{font-size:16px;margin:12px 16px 3px}small{display:block;margin:0 16px 12px;color:#bccad4}canvas{display:block;width:100%;height:260px;background:linear-gradient(45deg,#304455 25%,transparent 25%,transparent 75%,#304455 75%),linear-gradient(45deg,#304455 25%,#293a49 25%,#293a49 75%,#304455 75%);background-size:24px 24px;background-position:0 0,12px 12px}#status{min-height:24px}
+</style>
+<header><h1>Wasteland Brawler · Characters</h1><p>Preserved hero artwork and new transparent character sheets. Choose a pose to inspect the roster.</p><nav id="poses"></nav><p id="status">Loading artwork…</p><nav><a href="index.html">Play the game</a></nav></header><main id="roster"></main>
+<script src="assets/characters/manifest.js"></script>
+<section id="toki-art" style="max-width:1200px;margin:0 auto 32px"><h2>Toki · Complete new artwork</h2><p>All 12 reference-based poses used for Toki’s movement, attacks, and reactions.</p><div id="toki-poses" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px"></div></section>
+<script src="assets/sprites/toki-v2/gallery.js?v=2"></script>
+<script src="assets/sprites/rei-v2/gallery.js"></script>
+<script>
+const labels=['Guard','Walk A','Walk B','Windup','Strike','Hit reaction'];
+const animationLink=document.createElement('a');animationLink.href='animations.html';animationLink.textContent='View playable animations';document.querySelector('header').append(animationLink);
+let pose=0;const cards=[];
+labels.forEach((name,i)=>{const b=document.createElement('button');b.textContent=name;b.setAttribute('aria-pressed',String(i===0));b.onclick=()=>{pose=i;document.querySelectorAll('#poses button').forEach((el,n)=>el.setAttribute('aria-pressed',String(n===i)));cards.forEach(draw);};document.getElementById('poses').append(b);});
+const preserved={Kenshiro:{path:'assets/sprites/ken_S1.png',crop:[90,56,150,256]},Rei:window.REI_ART,Toki:window.TOKI_ART,Spade:{path:'assets/sprites/boss_spade_idle.png'},Heart:{path:'assets/sprites/boss_heart_idle.png'}};
+// Show every Toki pose independently of the shared six-pose roster controls.
+document.getElementById('roster').before(document.getElementById('toki-art'));
+const tokiLabels=['Open-palm guard','Walk A','Walk B','Jump preparation','Airborne jump','Hit reaction','Palm preparation','Palm strike','Kick preparation','Side kick','Prayer stance','Pressure-point strike'];
+function showHeroPoses(hero, poseLabels) {
+const tokiSheet=new Image();
+tokiSheet.onload=()=>{
+  const w=tokiSheet.naturalWidth/3,h=tokiSheet.naturalHeight/4;
+  poseLabels.forEach((label,i)=>{
+    const card=document.createElement('article'),title=document.createElement('h2'),canvas=document.createElement('canvas');
+    title.textContent=label;canvas.width=280;canvas.height=260;canvas.setAttribute('aria-label',hero+' '+label);
+    const scale=Math.min(260/w,235/h),ctx=canvas.getContext('2d');
+    ctx.drawImage(tokiSheet,(i%3)*w,Math.floor(i/3)*h,w,h,(280-w*scale)/2,250-h*scale,w*scale,h*scale);
+    card.append(title,canvas);document.getElementById(hero.toLowerCase()+'-poses').append(card);
+  });
+};
+tokiSheet.onerror=()=>{document.getElementById(hero.toLowerCase()+'-poses').textContent=hero+' artwork could not load. Please reload the gallery.';};
+tokiSheet.src=`assets/sprites/${hero.toLowerCase()}-v2/${hero.toLowerCase()}-actions.png?v=2`;
+}
+showHeroPoses('Toki',tokiLabels);
+const reiSection=document.createElement('section');reiSection.id='rei-art';reiSection.style='max-width:1200px;margin:0 auto 32px';
+reiSection.innerHTML='<h2>Rei · Complete new artwork</h2><p>All 12 reference-based poses for movement, Nanto cutting attacks, and hit reactions.</p><div id="rei-poses" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px"></div>';
+document.getElementById('toki-art').before(reiSection);
+showHeroPoses('Rei',['Open-hand guard','Walk A','Walk B','Jump preparation','Flying leap','Hit reaction','Cut preparation','Knife-hand strike','Kick preparation','Side kick','Nanto preparation','Nanto cutting strike']);
+function draw(card){const {ctx,img,s,canvas}=card;if(!img.complete||!img.naturalWidth)return;ctx.clearRect(0,0,canvas.width,canvas.height);const p=s.poses===1?0:pose;let rect=s.cellW?[(p%3)*s.cellW,Math.floor(p/3)*s.cellH,s.cellW,s.cellH]:(s.crop||[0,0,img.width,img.height]);const scale=Math.min(260/rect[2],235/rect[3]);ctx.drawImage(img,...rect,(canvas.width-rect[2]*scale)/2,250-rect[3]*scale,rect[2]*scale,rect[3]*scale);}
+let loaded=0;const all=[...Object.entries(preserved),...Object.entries(window.CHARACTER_ART||{})];
+for(const [key,s] of all){const article=document.createElement('article'),title=document.createElement('h2'),note=document.createElement('small'),canvas=document.createElement('canvas'),img=new Image();title.textContent=key.replaceAll('-',' ').replace(/\b\w/g,c=>c.toUpperCase());note.textContent=s.poses===1?'Story character · transparent PNG':s.cellW?'Six authored poses · transparent PNG':'Existing artwork preserved';canvas.width=280;canvas.height=260;canvas.setAttribute('aria-label',title.textContent+' artwork');article.append(title,note,canvas);document.getElementById('roster').append(article);const card={img,s,canvas,ctx:canvas.getContext('2d')};cards.push(card);img.onload=()=>{draw(card);loaded++;document.getElementById('status').textContent=`${loaded} / ${all.length} characters loaded`;};img.onerror=()=>{note.textContent='Artwork could not load';};img.src=s.path;}
+</script></html>
