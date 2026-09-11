@@ -32,7 +32,7 @@ function updateOpening(){
  const beat=OPENING_BEATS[OPENING.beat];if(!beat)return;
  OPENING.t++;OPENING.elapsed++;
  if(beat[0]==='strike'&&OPENING.t===2)sndHit();
- const next=press('Enter','Space','KeyZ')||anyGpPress();
+ const next=press('Enter','Space','KeyH')||anyGpPress();
  if(press('KeyQ')){finishOpening();return;}
  if(OPENING.t>=OPENING_TIMES[beat[0]]||(OPENING.t>30&&next)){
   OPENING.beat++;OPENING.t=0;

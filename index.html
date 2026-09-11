@@ -29,8 +29,8 @@
 <div id="debugBar" aria-label="Debug options"><strong>DEBUG</strong><label for="debugMap">Starting map</label><select id="debugMap"></select><button id="debugStart" type="button">Start map</button><button id="debugBoss" type="button">Jump to boss</button><button id="debugIntro" type="button">Replay intro</button></div>
 <canvas id="gameCanvas" width="1280" height="720"></canvas>
 <div id="hint">
-  P1: WASD/↑↓←→ Move · Z Punch · X Kick · C Jump · C→X Jump Kick · X+Z Special 1 · C+X+Z Special 2
-  &nbsp;|&nbsp; One keyboard + up to 2 controllers · 2 player slots · P2 keyboard: IJKL / U O P · Controller: ×Punch ○Kick □Jump · T: settings at title
+  P1: WASD Move · H Punch · K Kick · U Jump · U→K Jump Kick · K+H Special 1 · U+K+H Special 2
+  &nbsp;|&nbsp; One keyboard + up to 2 controllers · 2 player slots · P2 keyboard: ↑↓←→ / Numpad 1 2 3 · Controller: ×Punch ○Kick □Jump · T: settings at title
 </div>
 <script>
 // Sprite manifest inlined — no external file loading needed
@@ -416,8 +416,8 @@ function beginJoining() {
  GS.mode='1p';resetCS();
 }
 function pollJoins(midgame=false) {
- const candidates=[{type:'keyboard',id:0,pressed:press('KeyZ','KeyX')},
- {type:'keyboard',id:1,pressed:press('KeyU','KeyO')},
+ const candidates=[{type:'keyboard',id:0,pressed:press('KeyH','KeyK')},
+ {type:'keyboard',id:1,pressed:press('Numpad1','Numpad2')},
  ...connectedPads().map((p,i)=>({type:'pad',id:p.index,pressed:gpJustPressed(i,0)||gpJustPressed(i,1)}))];
  for(const source of candidates) {
   if(!source.pressed||JOIN.sources.some(s=>s&&s.type===source.type&&s.id===source.id))continue;
@@ -491,9 +491,9 @@ window.addEventListener('gamepaddisconnected', e => { gpConnected[e.gamepad.inde
 
 // ─── ABSTRACT INPUT PER PLAYER ──────────────────────────────────────
 // Controls:
-//   Jump              — C (P1) / P (P2) / Gamepad □ (btn2)
-//   Punch             — Z (P1) / U (P2) / Gamepad × (btn0)
-//   Kick              — X (P1) / O (P2) / Gamepad ○ (btn1)
+//   Jump              — U (P1) / Numpad 3 (P2) / Gamepad □ (btn2)
+//   Punch             — H (P1) / Numpad 1 (P2) / Gamepad × (btn0)
+//   Kick              — K (P1) / Numpad 2 (P2) / Gamepad ○ (btn1)
 //   Jump Kick         — Jump then Kick while airborne
 //   Special 1 (40%)   — Kick + Punch simultaneously
 //   Special 2 (80%)   — Jump + Kick + Punch simultaneously
@@ -518,19 +518,19 @@ function getInput(pIdx) {
   let punchP, kickP, jumpP, punchH, kickH, jumpH;
 
   if (keyboard === 0) {
-    punchP = keyPress('KeyZ') || gpJustPressed(pad,0);
-    kickP  = keyPress('KeyX') || gpJustPressed(pad,1);
-    jumpP  = keyPress('KeyC') || gpJustPressed(pad,2);
-    punchH = keyHeld('KeyZ')  || gpHeld(pad,0);
-    kickH  = keyHeld('KeyX')  || gpHeld(pad,1);
-    jumpH  = keyHeld('KeyC')  || gpHeld(pad,2);
+    punchP = keyPress('KeyH') || gpJustPressed(pad,0);
+    kickP  = keyPress('KeyK') || gpJustPressed(pad,1);
+    jumpP  = keyPress('KeyU') || gpJustPressed(pad,2);
+    punchH = keyHeld('KeyH')  || gpHeld(pad,0);
+    kickH  = keyHeld('KeyK')  || gpHeld(pad,1);
+    jumpH  = keyHeld('KeyU')  || gpHeld(pad,2);
   } else {
-    punchP = keyPress('KeyU')        || gpJustPressed(pad,0);
-    kickP  = keyPress('KeyO')        || gpJustPressed(pad,1);
-    jumpP  = keyPress('KeyP')        || gpJustPressed(pad,2);
-    punchH = keyHeld('KeyU')         || gpHeld(pad,0);
-    kickH  = keyHeld('KeyO')         || gpHeld(pad,1);
-    jumpH  = keyHeld('KeyP')         || gpHeld(pad,2);
+    punchP = keyPress('Numpad1')        || gpJustPressed(pad,0);
+    kickP  = keyPress('Numpad2')        || gpJustPressed(pad,1);
+    jumpP  = keyPress('Numpad3')        || gpJustPressed(pad,2);
+    punchH = keyHeld('Numpad1')         || gpHeld(pad,0);
+    kickH  = keyHeld('Numpad2')         || gpHeld(pad,1);
+    jumpH  = keyHeld('Numpad3')         || gpHeld(pad,2);
   }
 
   // ── Combo detection (priority: sp2 > sp1 > individual) ──────────
@@ -547,10 +547,10 @@ function getInput(pIdx) {
   const rawJumpP  = sp2       ? false : jumpP;
 
   return {
-    left: (keyboard===0?keyHeld('ArrowLeft','KeyA'):keyHeld('KeyJ')) || gpLeft,
-    right:(keyboard===0?keyHeld('ArrowRight','KeyD'):keyHeld('KeyL'))|| gpRight,
-    up:   (keyboard===0?keyHeld('ArrowUp','KeyW'):keyHeld('KeyI')) || gpUp,
-    down: (keyboard===0?keyHeld('ArrowDown','KeyS'):keyHeld('KeyK')) || gpDown,
+    left: (keyboard===0?keyHeld('KeyA'):keyHeld('ArrowLeft')) || gpLeft,
+    right:(keyboard===0?keyHeld('KeyD'):keyHeld('ArrowRight'))|| gpRight,
+    up:   (keyboard===0?keyHeld('KeyW'):keyHeld('ArrowUp')) || gpUp,
+    down: (keyboard===0?keyHeld('KeyS'):keyHeld('ArrowDown')) || gpDown,
     punchP: rawPunchP,
     kickP:  rawKickP,
     jumpP:  rawJumpP,
@@ -2478,7 +2478,7 @@ function resetToTitle() {
 function render() {
   const hint=document.getElementById('hint');
   if(!hint.originalText)hint.originalText=hint.textContent;
-  if(hint.originalText)hint.textContent=GAME_I18N.language==='en'?hint.originalText:GAME_I18N.language==='ja'?'P1: WASD／矢印 移動・Z パンチ・X キック・C ジャンプ ｜ P2: IJKL／U O P ｜ X+Z 必殺技・C+X+Z 超必殺技':'P1: WASD／方向鍵 移動・Z 拳擊・X 踢擊・C 跳躍 ｜ P2: IJKL／U O P ｜ X+Z 必殺技・C+X+Z 超必殺技';
+  if(hint.originalText)hint.textContent=GAME_I18N.language==='en'?hint.originalText:GAME_I18N.language==='ja'?'P1: WASD 移動・H パンチ・K キック・U ジャンプ ｜ P2: ↑↓←→／Num 1 2 3 ｜ K+H 必殺技・U+K+H 超必殺技':'P1: WASD 移動・H 拳擊・K 踢擊・U 跳躍 ｜ P2: ↑↓←→／Num 1 2 3 ｜ K+H 必殺技・U+K+H 超必殺技';
   document.getElementById('hint').style.display=GS.state==='title'?'none':'';
   ctx.clearRect(0,0,W,H);
   const shx=shakeAmt>0.5?rnd(-shakeAmt,shakeAmt):0;
@@ -2498,7 +2498,7 @@ function render() {
       sndConfirm();
     } else if (press('KeyT')) {
       GS.state='settings'; settingsCursor=0; sndCursor();
-    } else if (press('Enter','Space','KeyZ','KeyX','KeyU','KeyO') || anyGpPress()) {
+    } else if (press('Enter','Space','KeyH','KeyK','Numpad1','Numpad2') || anyGpPress()) {
       resetCampaign();beginJoining();pollJoins();GS.state='charselect';
       sndCursor();
     }
@@ -2547,7 +2547,7 @@ function render() {
   } else if (GS.state==='levelclear') {
     glFr++; GS.resultFr++;
     drawResultScreen('levelclear');
-    if (GS.resultFr>60 && (press('Enter','Space','KeyZ','KeyU')||anyGpPress())) {
+    if (GS.resultFr>60 && (press('Enter','Space','KeyH','Numpad1')||anyGpPress())) {
       if (GS.lvlIdx<LEVELS.length-1) {
         GS.resultFr=0;
         // Revive P1; only revive P2 in 2P mode
@@ -2560,7 +2560,7 @@ function render() {
   } else if (GS.state==='victory') {
     glFr++; GS.resultFr++;
     drawResultScreen('victory');
-    if (GS.resultFr>80 && (press('Enter','Space','KeyZ','KeyU')||anyGpPress())) {
+    if (GS.resultFr>80 && (press('Enter','Space','KeyH','Numpad1')||anyGpPress())) {
       hitStop=0;
   GS.state='title'; glFr=0;
     }
@@ -2568,7 +2568,7 @@ function render() {
   } else if (GS.state==='gameover') {
     glFr++; GS.resultFr++;
     drawResultScreen('gameover');
-    if (GS.resultFr>60 && (press('Enter','Space','KeyZ','KeyU')||anyGpPress())) {
+    if (GS.resultFr>60 && (press('Enter','Space','KeyH','Numpad1')||anyGpPress())) {
       if(restoreCheckpoint()){ctx.restore();return;}
       PLAYERS.forEach(p=>{p.score=0;p.lives=3;p.hp=p.maxHp;p.special=0;p.inactive=false;});
       hitStop=0;
@@ -2730,7 +2730,7 @@ function updateModeSelect() {
   if (mvL && GS.modeCursor===1) { GS.modeCursor=0; sndCursor(); }
 
   // Confirm with any action button
-  if (press('Enter','Space','KeyZ','KeyX','KeyC','KeyU','KeyO','KeyP') || [0,1].some(p=>[0,1,2,9].some(b=>gpJustPressed(p,b)))) {
+  if (press('Enter','Space','KeyH','KeyK','KeyU','Numpad1','Numpad2','Numpad3') || [0,1].some(p=>[0,1,2,9].some(b=>gpJustPressed(p,b)))) {
     GS.mode = GS.modeCursor===0 ? '1p' : '2p';
     GS.state='charselect'; resetCS();
     sndConfirm();
@@ -2754,7 +2754,7 @@ function updateSettings() {
     if (item==='p2Pad') changePadSetting('p2Pad',dir);
     sndCursor();
   }
-  if (press('Enter','Space','KeyZ','KeyX','KeyC')||gpJustPressed(0,0)) {
+  if (press('Enter','Space','KeyH','KeyK','KeyU')||gpJustPressed(0,0)) {
     if (item==='joystick'||item==='invertY') INPUT_SETTINGS[item]=!INPUT_SETTINGS[item];
     else if (item==='deadzone') INPUT_SETTINGS.deadzone=INPUT_SETTINGS.deadzone>=.5?.08:INPUT_SETTINGS.deadzone+.04;
     else if (item==='p1Pad') changePadSetting('p1Pad',1);
@@ -3128,7 +3128,7 @@ function updateIntro() {
   }
 
   if (INTRO.t > 20 &&
-     (press('Enter','Space','KeyZ','KeyX','KeyC','KeyU','KeyO','KeyP','Escape') ||
+     (press('Enter','Space','KeyH','KeyK','KeyU','Numpad1','Numpad2','Numpad3','Escape') ||
       anyGpPress())) {
     startLevel(0); return;
   }

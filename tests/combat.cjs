@@ -97,7 +97,7 @@ test('Hit stop freezes combat and is cleared when a new level starts',`
 `);
 test('Keyboard movement is independent for P1 and P2',`
  keys.KeyA=true;assert(getInput(0).left);assert(!getInput(1).left);delete keys.KeyA;
- keys.KeyJ=true;assert(getInput(1).left);assert(!getInput(0).left);delete keys.KeyJ;
+ keys.ArrowLeft=true;assert(getInput(1).left);assert(!getInput(0).left);delete keys.ArrowLeft;
 `);
 test('Both boss types use interruptible telegraphed strikes and recover',`
  for(const name of ['Spade','Heart']){
@@ -197,18 +197,18 @@ test('Expanded depth lane lets fighters move away from and toward the camera',`
  assert.ok(fighterDepthScale(GROUND_Y)<fighterDepthScale(LANE_FRONT));
 `);
 test('Join order assigns keyboard banks exclusively and reserves different fighters',`
- beginJoining();GS.state='charselect';clearKeys();jp.KeyO=true;pollJoins();
+ beginJoining();GS.state='charselect';clearKeys();jp.Numpad2=true;pollJoins();
  assert.equal(JOIN.sources[0].id,1);assert.equal(JOIN.sources[1],null);
- clearKeys();jp.KeyU=true;assert.equal(getInput(0).punchP,true);assert.equal(getInput(1).punchP,false);
- jp.KeyZ=true;pollJoins();assert.equal(JOIN.sources[1].id,0);
+ clearKeys();jp.Numpad1=true;assert.equal(getInput(0).punchP,true);assert.equal(getInput(1).punchP,false);
+ jp.KeyH=true;pollJoins();assert.equal(JOIN.sources[1].id,0);
  assert.notEqual(CS.cursors[0],CS.cursors[1]);
  clearKeys();JOIN.enabled=false;
 `);
 test('Mid-game joining waits for HUD confirmation and preserves player one',`
  beginJoining();JOIN.sources[0]={type:'keyboard',id:0};P1.charIdx=0;P1.hp=67;
- clearKeys();jp.KeyO=true;pollJoins(true);
+ clearKeys();jp.Numpad2=true;pollJoins(true);
  assert.equal(JOIN.selecting[1],true);assert.equal(P2.inactive,true);assert.notEqual(CS.cursors[1],0);
- clearKeys();CS.inputDelay[1]=0;jp.KeyU=true;selectJoinedPlayer(1,true);
+ clearKeys();CS.inputDelay[1]=0;jp.Numpad1=true;selectJoinedPlayer(1,true);
  assert.equal(P2.inactive,false);assert.equal(GS.mode,'2p');assert.equal(P1.hp,67);
  assert.notEqual(P2.charIdx,P1.charIdx);assert.equal(P2.invincible,90);
  clearKeys();JOIN.enabled=false;
@@ -314,4 +314,16 @@ test('Debug destinations initialize every map and boss with a playable party',`
  assert.equal(P1.charIdx,2);assert.equal(P2.charIdx,1);DEBUG_START.map=0;JOIN.enabled=false;
 `);
 
+test('H/K/U keyboard actions do not move or join a second player',`
+ beginJoining();JOIN.sources[0]={type:'keyboard',id:0};
+ for(const [code,action] of [['KeyH','punchP'],['KeyK','kickP'],['KeyU','jumpP']]) {
+  clearKeys();jp[code]=true;keys[code]=true;
+  assert.equal(getInput(0)[action],true);pollJoins(true);assert.equal(JOIN.sources[1],null);
+  const other=getInput(1);assert(!other.left&&!other.right&&!other.up&&!other.down);
+  delete keys[code];
+ }
+ clearKeys();keys.KeyH=true;jp.KeyK=true;assert(getInput(0).special1P);
+ keys.KeyU=true;assert(getInput(0).special2P);
+ delete keys.KeyH;delete keys.KeyU;clearKeys();JOIN.enabled=false;
+`);
 console.log(passed+' combat checks passed.');
