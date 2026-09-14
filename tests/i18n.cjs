@@ -1,6 +1,7 @@
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict'),path=require('node:path');
 const root=path.join(__dirname,'..'),saved={};
-function environment(){const env={console,localStorage:{getItem:k=>saved[k],setItem:(k,v)=>saved[k]=v},document:{documentElement:{setAttribute(){}}}};vm.createContext(env);for(const file of ['i18n.js','i18n-story.js','campaign.js','opening.js'])vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),env);return env;}
+function environment(){const env={console,localStorage:{getItem:k=>saved[k],setItem:(k,v)=>saved[k]=v},document:{documentElement:{setAttribute(){}}}};vm.createContext(env);
+vm.runInContext(fs.readFileSync(require('node:path').join(__dirname,'../arcade.js'),'utf8'),env);for(const file of ['i18n.js','i18n-story.js','campaign.js','opening.js'])vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),env);return env;}
 let env=environment();env.assert=assert;
 vm.runInContext(`
 for(const lang of ['ja','zh-Hant']){

@@ -75,7 +75,7 @@ def main(hero,movement,combat,cols='3'):
       'anchors':[(i%4)*cw+cw/2 for i in seq],'scale':176/240,'dw':round(cw*176/240),'dh':176} for state,seq in sequences.items()}
     updates['ken_jumpkick']={'sheet':'assets/sprites/ken_S2.png',
       'regions':[[337,48,178,263],[338,427,149,225],[541,390,206,168],[778,401,241,230],[775,25,201,247],[1273,156,181,174]],
-      'anchors':[430,420,620,870,865,1360],'scale':182/256,'dw':122,'dh':182}
+      'anchors':[430,420,620,870,865,1360],'scale':176/256,'dw':122,'dh':176}
     pattern=r'window\.SPRITE_MANIFEST\s*=\s*(\{.*?\});'
     for path in [ROOT/'index.html',ROOT/'assets/sprites/manifest.json',ROOT/'assets/sprites/sprites.js']:
         raw=path.read_text();match=re.search(pattern,raw,re.S) if path.suffix!='json' else None
@@ -93,7 +93,7 @@ def main(hero,movement,combat,cols='3'):
     preview={k:v for k,v in data['sprites'].items() if k.startswith(('ken_','rei_','toki_'))}
     for key,rects in regions.items():
         if preview[key].get('regions'):continue
-        preview[key]={**preview[key],'regions':rects,'anchors':anchors[key],'scale':182/256}
+        preview[key]={**preview[key],'regions':rects,'anchors':anchors[key],'scale':176/256}
     (ROOT/'assets/sprites/player-animations.js').write_text('window.PLAYER_ANIMATIONS = '+json.dumps(preview)+';\n')
     print(f'{hero}: 24 new poses, seven animation sequences, cells {cw} x {ch}')
 

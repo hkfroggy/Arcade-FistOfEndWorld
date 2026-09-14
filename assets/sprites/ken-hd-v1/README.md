@@ -1,0 +1,7 @@
+# Ken high-resolution redraw
+
+Created with built-in imagegen. `stance-reference.png` is the 1024 × 1536 character reference. Four new 12-pose sheets now drive every Ken gameplay action. `walk.png`, `body.png`, `punch.png`, and `kick.png` are transparent atlases extracted at native resolution using `prepare_ken_hd.py`. The source sheets are retained alongside them. All sequences use a 176px display height reference, matching Rei and Toki. Frames are reused for anticipation, impact and recovery to preserve the existing timing. Special attacks reuse the new straight-punch poses.
+
+## Prompt
+
+Use case: stylized-concept. Redraw Kenshiro from Fist of the North Star as ONE high-resolution full-body game character illustration, not a sprite sheet and not an upscale. Transparent background. Right-facing three-quarter side view fighting guard stance, both boots fully visible, anatomically convincing hands, short spiky black hair, stern face, muscular build, sleeveless open dark blue leather outfit, silver shoulder armor and wrist guards, matching blue trousers and boots. Crisp confident ink outlines, clean sharply separated anime cel shading, precise facial features, no painterly smudges, no blur, no glow, no motion blur, no green fringe. Character fills 85 percent of a portrait 1024x1536 image with room around hands and feet. No text, no ground shadow, no scenery. Production master for sharp in-game animation.

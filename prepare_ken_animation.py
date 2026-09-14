@@ -22,7 +22,7 @@ seq={'idle':list(range(8)),'walk':list(range(8,16)),
 'jump':list(range(32,40)),'special':list(range(40,48)),
 'stunned':[48,49,50],'knockdown':[51,52],'getup':[53,54,55],'landing':[38,39,0]}
 updates={'ken_'+state:{'sheet':'assets/sprites/ken-v2/actions.png','regions':[[i%8*cw,i//8*ch,cw,ch] for i in ids],
-'anchors':[i%8*cw+cw/2 for i in ids],'scale':182/240,'dw':round(cw*182/240),'dh':182} for state,ids in seq.items()}
+'anchors':[i%8*cw+cw/2 for i in ids],'scale':176/240,'dw':round(cw*176/240),'dh':176} for state,ids in seq.items()}
 pattern=r'window\.SPRITE_MANIFEST\s*=\s*(\{.*?\});'
 for p in [ROOT/'index.html',ROOT/'assets/sprites/manifest.json',ROOT/'assets/sprites/sprites.js']:
  raw=p.read_text();m=re.search(pattern,raw,re.S) if p.suffix!='.json' else None

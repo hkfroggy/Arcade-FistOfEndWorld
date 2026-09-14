@@ -306,5 +306,19 @@
     "cellH": 877,
     "height": 220,
     "poses": 1
+  },
+  "spade": {
+    "path": "assets/characters/spade.png",
+    "cellW": 868,
+    "cellH": 512,
+    "height": 182,
+    "poses": 6
+  },
+  "heart": {
+    "path": "assets/characters/heart.png",
+    "cellW": 667,
+    "cellH": 521,
+    "height": 215,
+    "poses": 6
   }
 }

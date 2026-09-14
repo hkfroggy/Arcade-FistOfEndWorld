@@ -82,9 +82,35 @@ const CAMPAIGN_LEVELS=[
       fight('Quiet approach',['elite','elite']),
       rest('Julia at the battlefield',['Julia is alive. The long search reaches its end.','Recover fully. No soldiers will enter the duel.'],{fullHeal:true}),
       finale('Raoh',['RAOH — FINAL BATTLEFIELD','Three phases. Watch the fists, feet, and aura tell.'])]},
-].map((l,id)=>({...l,id,title:`LEVEL ${id+1} — ${l.name.toUpperCase()}`,subtitle:l.objective,
-  route:l.route.map((n,i)=>({...n,x:420+i*590})),bossX:420+(l.route.length-1)*590,
-  bossIntro:l.route.at(-1).text,waves:[]}));
+].map((l,id)=>{
+  const extraNames=[
+    ['Scrap road ambush','Dry river raiders','Settlement blockade'],
+    ['Burned market patrol','Backstreet siege','Village barricade'],
+    ['KING street patrol','Palace supply yard','Royal guard blockade'],
+    ['Dust road raiders','Wrecked tanker ambush','Fuel depot blockade'],
+    ['Outer prison patrol','Cell block riot','Execution yard guard'],
+    ['Cult road ambush','Abandoned quarry','Sealed chamber guard'],
+    ['Canal patrol','Stone quarry battle','Pyramid gate guard'],
+    ['Army roadblock','Supply depot assault','Command post guard'],
+    ['Last army patrol','Broken ridge battle','Final honor guard']
+  ][id];
+  const pool=[...new Set(l.route.flatMap(n=>n.roles||[]))];
+  const groupSize=6+Math.floor(id/3);
+  const reinforce=roles=>Array.from({length:groupSize},(_,i)=>roles[i]||pool[i%pool.length]);
+  const route=[];let addedPatrol=false;
+  l.route.forEach((node,originalIndex)=>{
+    if((node.kind==='boss'&&id!==8)||(id===8&&node.fullHeal)){
+      for(let j=1;j<3;j++)route.push(fight(extraNames[j],reinforce(pool.slice(j).concat(pool.slice(0,j)))));
+    }
+    const n={...node,originalIndex};
+    if(n.roles)n.roles=id===0&&originalIndex===0?['scavenger','scavenger','thug','thug']:reinforce(n.roles);
+    route.push(n);
+    if(n.kind==='fight'&&!addedPatrol){route.push(fight(extraNames[0],reinforce(pool)));addedPatrol=true;}
+  });
+  const placed=route.map((n,i)=>({...n,x:420+i*900}));
+  return {...l,id,title:`LEVEL ${id+1} — ${l.name.toUpperCase()}`,subtitle:l.objective,
+    route:placed,bossX:placed.at(-1).x,bossIntro:l.route.at(-1).text,waves:[]};
+});
 
 const MOVE_LIBRARY={
   thrust:{name:'THRUST',startup:27,active:5,recovery:32,range:155,lane:17,damage:18},
@@ -95,8 +121,8 @@ const MOVE_LIBRARY={
   whip:{name:'WHIP SWEEP',startup:34,active:6,recovery:38,range:210,lane:26,damage:19},
   charge:{name:'CHARGE',startup:43,active:20,recovery:55,range:78,lane:20,damage:28,advance:7},
   slam:{name:'HAND SLAM',startup:60,active:8,recovery:65,range:145,lane:26,damage:28,ground:true},
-  sweep:{name:'ARM SWEEP',startup:46,active:7,recovery:48,range:250,lane:30,damage:22},
-  aerial:{name:'DIVING STRIKE',startup:38,active:12,recovery:45,range:100,lane:22,damage:23,advance:4,jump:true},
+  sweep:{hitZone:'lower',name:'ARM SWEEP',startup:46,active:7,recovery:48,range:250,lane:30,damage:22},
+  aerial:{hitZone:'head',name:'DIVING STRIKE',startup:38,active:12,recovery:45,range:100,lane:22,damage:23,advance:4,jump:true},
   aura:{name:'AURA BURST',startup:54,active:7,recovery:48,range:280,lane:23,damage:27},
   bomb:{name:'EXPLOSIVE',startup:55,active:4,recovery:58,range:70,lane:22,damage:20,ground:true},
 };
@@ -105,7 +131,7 @@ const BOSS_PROFILES={
   Spade:bossProfile(320,22,2.2,['thrust','lunge'],'#694153'),
   Heart:bossProfile(500,30,1.3,['crush','charge'],'#b54839',{guard:true}),
   Shin:bossProfile(480,22,2.6,['thrust','follow','aerial'],'#a85466'),
-  Jagi:bossProfile(440,24,1.8,['shotgun','lunge','shotgun'],'#765b41'),
+  Jagi:bossProfile(440,24,1.8,['shotgun'],'#765b41'),
   Uighur:bossProfile(560,28,1.5,['whip','charge','whip'],'#474b68'),
   'Devil Rebirth':bossProfile(680,30,1.1,['slam','sweep','slam'],'#625a6f',{giant:true}),
   Souther:bossProfile(580,24,2.6,['thrust','follow','aerial'],'#d3be83',{guard:true}),
@@ -137,7 +163,7 @@ function resetCampaign() {
   GS.checkpoint=null;
 }
 function captureCheckpoint(index,x) {
-  GS.checkpoint={version:1,lvlIdx:GS.lvlIdx,nodeIndex:index,x,
+  GS.checkpoint={version:2,lvlIdx:GS.lvlIdx,nodeIndex:index,x,
     story:JSON.parse(JSON.stringify(GS.story)),mode:GS.mode,
     players:PLAYERS.map(p=>({charIdx:p.charIdx,score:p.score}))};
   try { localStorage.setItem('fist-campaign-checkpoint',JSON.stringify(GS.checkpoint)); } catch(_) {}
@@ -150,11 +176,18 @@ function restoreCheckpoint() {
 function loadCampaignSave() {
   try {
     const cp=JSON.parse(localStorage.getItem('fist-campaign-checkpoint'));
-    if(cp?.version!==1||!Number.isInteger(cp.lvlIdx)||!CAMPAIGN_LEVELS[cp.lvlIdx]||
+    if(![1,2].includes(cp?.version)||!Number.isInteger(cp.lvlIdx)||!CAMPAIGN_LEVELS[cp.lvlIdx]||
        !Number.isInteger(cp.nodeIndex)||!CAMPAIGN_LEVELS[cp.lvlIdx].route[cp.nodeIndex]||
-       !Number.isFinite(cp.x)||cp.x<0||cp.x>4800||!['1p','2p'].includes(cp.mode)||
+       !Number.isFinite(cp.x)||cp.x<0||cp.x>LEVEL_W||!['1p','2p'].includes(cp.mode)||
        !Array.isArray(cp.players)||cp.players.length!==2||!cp.story||!Array.isArray(cp.story.rescues)||
        cp.players.some(p=>!Number.isInteger(p.charIdx)||p.charIdx<0||p.charIdx>2||!Number.isFinite(p.score)))return false;
+    if(cp.version===1){
+      const route=CAMPAIGN_LEVELS[cp.lvlIdx].route;
+      const index=route.findIndex(n=>n.originalIndex===cp.nodeIndex);
+      if(index<0)return false;
+      cp.x=clmp(route[index].x+(cp.x-(420+cp.nodeIndex*590)),22,LEVEL_W-30);
+      cp.nodeIndex=index;cp.version=2;
+    }
     GS.checkpoint=cp;return restoreCheckpoint();
   } catch(_){return false;}
 }
@@ -165,7 +198,7 @@ function completeEncounter() {
   if(!node)return;
   if(node.rescue)GS.pickups.push({id:`${GS.lvlIdx}:${GS.nodeIndex}`,x:node.x+100,y:GROUND_Y-48,label:node.rescue});
   GS.nodeIndex++;GS.encounterActive=false;GS.arena=null;GS.bossActive=false;GS.boss=null;GS.state='playing';
-  GS.routeDelay=50;cam.maxX=LEVEL_W-W;
+  GS.routeDelay=50;cam.maxX=LEVEL_W-gameplayViewWidth();
 }
 function beginEncounter(node) {
   GS.encounterActive=true;
@@ -184,15 +217,30 @@ function beginEncounter(node) {
     GS.bossActive=true;GS.state='boss';
     showDialog(node.text||[node.name.toUpperCase(), 'Read the tell. Counter the recovery.'],200);
   } else {
-    node.roles.slice(0,5).forEach((role,i)=>{
-      const fromLeft=GS.lvlIdx>0&&i===node.roles.length-1&&node.roles.length>2;
-      GS.enemies.push(mkEnemy(role,fromLeft?left+65:left+W-170-i*75,GROUND_Y-35+(i%3)*24));
+    node.roles.forEach((role,i)=>{
+      const fromLeft=GS.lvlIdx>0&&i%4===3;
+      const column=Math.floor(i/3),lane=i%3;
+      const x=fromLeft?left+65+column*42:left+W-130-column*85;
+      GS.enemies.push(mkEnemy(role,x,LANE_BACK+12+lane*40));
     });
     showDialog([node.name.toUpperCase(),node.rescue?'Clear the area; visit the upper lane to rescue survivors.':'Clear the encounter to continue.'],130);
   }
 }
+const SUPPLY_DROP_CHANCE=.2;
+function breakSupply(item){
+  if(item.broken)return;
+  item.broken=true;item.revealT=28;
+  item.hasDrop=Math.random()<SUPPLY_DROP_CHANCE;
+}
 function updateCampaignRoute() {
   if(!GS.story)resetCampaign();
+  for(const item of GS.supplies||[]) {
+    if(!item.broken||item.taken)continue;
+    if(item.revealT>0){item.revealT--;continue;}
+    if(!item.hasDrop){item.taken=true;continue;}
+    const p=activeParty().find(p=>p.onGround&&!p.downT&&!p.riseT&&Math.abs(p.x-item.x)<30&&Math.abs(p.y-item.y)<22);
+    if(p){item.taken=true;p.hp=Math.min(p.maxHp,p.hp+(item.kind==='medkit'?45:25));p.special=Math.min(p.maxSpecial,p.special+(item.kind==='water'?25:10));spawnTxt(item.x,item.y-48,item.kind.toUpperCase(),'#bfffc8',14);}
+  }
   for(const pickup of GS.pickups) {
     if(pickup.taken)continue;
     if(activeParty().some(p=>p.onGround&&Math.abs(p.x-pickup.x)<48&&Math.abs(p.y-pickup.y)<20)) {
@@ -206,7 +254,7 @@ function updateCampaignRoute() {
   }
   if(GS.routeDelay>0){GS.routeDelay--;return;}
   if(GS.encounterActive) {
-    if(!GS.boss&&GS.enemies.every(e=>e.dead||e.dying>0))completeEncounter();
+    if(!GS.boss&&GS.enemies.every(e=>e.dead))completeEncounter();
     return;
   }
   const node=LEVELS[GS.lvlIdx].route[GS.nodeIndex];
@@ -225,6 +273,7 @@ function selectBossMove(b) {
 }
 function updateCampaignBoss(b) {
   if(tickEnemyReaction(b))return;
+  if(b.name==='Jagi'&&updateWeaponEnemy(b))return;
   b.phase=b.profile.final?(b.hp<b.maxHp*.33?3:b.hp<b.maxHp*.67?2:1):(b.hp<b.maxHp*.5?2:1);
   if(b.attack) {
     const a=b.attack;a.elapsed++;
@@ -234,7 +283,7 @@ function updateCampaignBoss(b) {
       for(const p of activeParty()) {
         if(a.hits.has(p)||p.z>42)continue;
         const inArea=a.ground?Math.abs(p.x-a.markX)<a.range*.5&&Math.abs(p.y-a.markY)<a.lane:inStrikeLane(b,p,a.range,a.lane);
-        if(inArea&&damagePlayer(p,a.damage,b))a.hits.add(p);
+        if(inArea&&damagePlayer(p,a.damage,b,attackHitZone(a)))a.hits.add(p);
       }
     }
     if(a.elapsed>=a.startup+a.active+a.recovery){b.attack=null;b.z=0;b.cooldown=22;setFighterState(b,'approach');}
@@ -258,21 +307,7 @@ function updateCampaignBoss(b) {
   }
 }
 function bossOpening(b) {return b.attack&&b.attack.elapsed>=b.attack.startup+b.attack.active;}
-function drawBossTelegraph(b,camX) {
-  if(!b?.attack)return;
-  const a=b.attack;if(a.elapsed>=a.startup+a.active)return;
-  const active=a.elapsed>=a.startup;
-  const x=a.ground?a.markX-a.range*.5:b.dir>0?b.x:b.x-a.range;
-  ctx.save();ctx.fillStyle=active?'rgba(255,75,35,.30)':'rgba(255,205,100,.17)';
-  ctx.strokeStyle=active?'#ff6038':'#ffd47d';ctx.lineWidth=2;
-  ctx.fillRect(x-camX,(a.ground?a.markY:b.y)-a.lane,a.range,a.lane*2);
-  ctx.strokeRect(x-camX,(a.ground?a.markY:b.y)-a.lane,a.range,a.lane*2);
-  ctx.font='bold 12px Courier New';ctx.textAlign='center';ctx.fillStyle='#ffe4ad';
-  ctx.fillText(a.name,x-camX+a.range/2,(a.ground?a.markY:b.y)-a.lane-8);ctx.restore();
-}
 function drawCampaignBoss(b,state,fr) {
-  if(b.name==='Spade')return drawSpade(0,0,b.dir,state,fr);
-  if(b.name==='Heart')return drawHeart(0,0,b.dir,state,fr);
   // Fallback while the character's new PNG sheet is loading or unavailable.
   const d={...EDEFS.heavy,scale:b.profile.giant?2.8:b.name==='Raoh'?1.7:1.35,
     torsoClr:b.profile.color,legClr:'#272632',skinClr:'#bd936f',hairClr:'#c6ac79'};
@@ -297,18 +332,126 @@ function drawCampaignScenery(camX) {
     ctx.fillStyle='#88775e';ctx.beginPath();ctx.moveTo(x,95);ctx.lineTo(x+300,400);ctx.lineTo(x+50,400);ctx.fill();
   } else if(theme==='prison'||theme==='cult') {
     ctx.fillStyle='#1d242e';for(let i=0;i<7;i++)ctx.fillRect(x-640+i*180,130,22,292);
-    ctx.fillRect(0,112,W,26);ctx.fillRect(0,390,W,12);
+    ctx.fillRect(0,112,sceneWidth,26);ctx.fillRect(0,390,sceneWidth,12);
   } else if(theme==='city'||theme==='capital') {
     ctx.fillStyle='#873e3b';for(let i=0;i<5;i++){const px=x-450+i*250;ctx.fillRect(px,150,34,135);ctx.fillStyle='#c9a477';ctx.fillRect(px+15,160,4,95);ctx.fillRect(px+7,185,20,4);ctx.fillStyle='#873e3b';}
   }
   ctx.restore();
 }
-function drawCampaignMarkers(camX) {
-  for(const p of GS.pickups) {
-    if(p.taken||Math.abs(p.x-camX-W/2)>W)continue;
-    ctx.save();ctx.strokeStyle='#a7e7c4';ctx.lineWidth=2;ctx.strokeRect(p.x-camX-26,p.y-16,52,32);
-    ctx.fillStyle='#caffdc';ctx.font='12px Courier New';ctx.textAlign='center';ctx.fillText('RESCUE + SUPPLIES',p.x-camX,p.y-23);ctx.restore();
+function supplyForMap(map,index){
+  return [['water','food'],['food','medkit'],['medkit','food'],['water','food'],['medkit','water'],['water','food'],['food','medkit'],['medkit','food'],['medkit','water']][map][index%2];
+}
+function containerForMap(map){return ['barrel','crate','cabinet','barrel','cabinet','barrel','urn','crate','crate'][map];}
+// Same world-space reference as the playable fighters, before lane perspective.
+const SUPPLY_CONTAINER_HEIGHT = 144 * .7;
+function drawGroundShadow(x,y,width,elevation=0){
+  ctx.save();ctx.translate(x,y);
+  const fade=Math.max(.25,1-elevation/240), spread=Math.max(.55,1-elevation/350);
+  for(let i=3;i>=0;i--){
+    ctx.fillStyle=`rgba(12,9,8,${(.035+(3-i)*.025)*fade})`;
+    ctx.beginPath();ctx.ellipse(5+i,2,width*spread+i*3,Math.max(3,width*.2)+i,0,0,Math.PI*2);ctx.fill();
   }
+  // Tight contact shadow makes the base meet the road; airborne objects lose it.
+  const contact=Math.max(0,1-elevation/24);
+  if(contact>0){
+    ctx.fillStyle=`rgba(10,8,6,${.28*contact})`;
+    ctx.beginPath();ctx.ellipse(0,1,width*.82,Math.max(2,width*.09),0,0,Math.PI*2);ctx.fill();
+  }
+  ctx.restore();
+}
+const SALVAGE_ART = new Image();SALVAGE_ART.src='assets/props/salvage.png';
+function drawSalvageArt(index,height){
+  if(!SALVAGE_ART.complete||!SALVAGE_ART.naturalWidth)return false;
+  const w=SALVAGE_ART.naturalWidth/4,h=SALVAGE_ART.naturalHeight/2,scale=height/(h-8);
+  ctx.drawImage(SALVAGE_ART,index%4*w,Math.floor(index/4)*h,w,h,-w*scale/2,-(h-4)*scale,w*scale,h*scale);
+  return true;
+}
+function drawSupplyBreak(item){
+  const t=1-item.revealT/28;
+  if(t>=1)return;
+  ctx.save();
+  for(let i=0;i<9;i++){
+    const dir=i%2?-1:1,x=dir*t*(24+i*6),y=-35-Math.sin(t*Math.PI)*(26+i*5)+t*38;
+    ctx.save();ctx.translate(x,y);ctx.rotate(dir*t*(2+i*.3));ctx.globalAlpha=1-t;
+    ctx.fillStyle=item.container==='crate'?'#887052':i%2?'#73513a':'#454940';
+    ctx.fillRect(-5,-3,10+i%3*3,6);ctx.strokeStyle='#b29a70';ctx.strokeRect(-5,-3,10+i%3*3,6);ctx.restore();
+  }
+  ctx.fillStyle=`rgba(164,140,108,${(1-t)*.3})`;
+  for(let i=0;i<5;i++){ctx.beginPath();ctx.ellipse((i-2)*t*20,-8-t*12,9+t*22,5+t*9,0,0,Math.PI*2);ctx.fill();}
+  ctx.restore();
+}
+function drawSupplyContainer(kind){
+  if(drawSalvageArt(({barrel:0,crate:1,cabinet:2,urn:3})[kind]??0,SUPPLY_CONTAINER_HEIGHT))return;
+  ctx.save();ctx.scale(SUPPLY_CONTAINER_HEIGHT/56,SUPPLY_CONTAINER_HEIGHT/56);
+  ctx.lineWidth=1.5;ctx.strokeStyle='#241b17';
+  const metal=ctx.createLinearGradient(-25,0,25,0);
+  metal.addColorStop(0,'#343b38');metal.addColorStop(.3,'#929077');metal.addColorStop(.7,'#655543');metal.addColorStop(1,'#282c2b');
+  ctx.fillStyle=metal;
+  if(kind==='urn'){
+    // Salvaged fuel canister replaces the clean pottery silhouette.
+    ctx.fillRect(-19,-49,38,49);ctx.strokeRect(-19,-49,38,49);
+    ctx.strokeRect(-10,-55,20,7);ctx.fillStyle='#252a27';ctx.fillRect(10,-53,8,5);
+  }else if(kind==='barrel'){
+    ctx.fillRect(-23,-51,46,48);ctx.strokeRect(-23,-51,46,48);
+    ctx.beginPath();ctx.ellipse(0,-51,23,5,0,0,Math.PI*2);ctx.fill();ctx.stroke();
+    for(const y of [-42,-12]){ctx.fillStyle='#292e2b';ctx.fillRect(-24,y,48,4);ctx.fillStyle='#aaa48b';ctx.fillRect(-24,y,48,1);}
+  }else{
+    ctx.fillRect(-25,-56,50,56);ctx.strokeRect(-25,-56,50,56);
+    if(kind==='cabinet'){
+      ctx.strokeRect(-20,-51,40,46);ctx.fillStyle='#202521';ctx.fillRect(12,-34,3,11);
+      for(let y=-46;y<-35;y+=4)ctx.fillRect(-14,y,20,1);
+    }else{
+      ctx.fillStyle='#5a4733';for(let y=-50;y<-3;y+=11)ctx.fillRect(-21,y,42,9);
+      ctx.strokeStyle='#a39773';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(-20,-51);ctx.lineTo(20,-5);ctx.stroke();
+      ctx.fillStyle='#2c3331';ctx.fillRect(-25,-54,7,54);ctx.fillRect(18,-54,7,54);
+    }
+  }
+  // Fixed wear marks avoid shimmering or random changes between frames.
+  ctx.fillStyle='#854a2d';for(let i=0;i<15;i++){const x=(i*17%37)-18,y=-8-(i*13%37);ctx.fillRect(x,y,3+i%4,1+i%3);}
+  ctx.strokeStyle='#c3b28a';ctx.lineWidth=.6;
+  for(let i=0;i<7;i++){const x=(i*11%30)-15,y=-12-i*5;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+7,y-2);ctx.stroke();}
+  ctx.fillStyle='#bbb49a';for(const x of [-20,20])for(const y of [-49,-7]){ctx.beginPath();ctx.arc(x,y,1.3,0,Math.PI*2);ctx.fill();}
+  // Faded hazard plate and improvised steel patch.
+  ctx.fillStyle='#c6a34e';ctx.fillRect(-9,-34,18,15);ctx.strokeStyle='#332b20';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(-6,-22);ctx.lineTo(0,-31);ctx.lineTo(6,-22);ctx.closePath();ctx.stroke();
+  ctx.fillStyle='#332b20';ctx.fillRect(-1,-28,2,3);ctx.fillRect(-1,-24,2,1);
+  ctx.restore();
+}
+function drawSupplyIcon(kind){
+  if(drawSalvageArt(({water:4,medkit:5,food:6})[kind]??6,38))return;
+  ctx.lineWidth=2;ctx.strokeStyle='#17212a';
+  if(kind==='water'){
+    ctx.fillStyle='#93dfe8';ctx.fillRect(-10,-32,20,30);ctx.strokeRect(-10,-32,20,30);
+    ctx.fillStyle='#456578';ctx.fillRect(-7,-40,14,8);ctx.fillStyle='#e7fcff';ctx.fillRect(-6,-27,4,18);
+    ctx.fillStyle='#217aaa';ctx.fillRect(-9,-12,18,9);
+  }else if(kind==='medkit'){
+    ctx.fillStyle='#ebe8cf';ctx.fillRect(-21,-29,42,27);ctx.strokeRect(-21,-29,42,27);ctx.strokeRect(-8,-36,16,7);
+    ctx.fillStyle='#d44240';ctx.fillRect(-4,-24,8,17);ctx.fillRect(-9,-19,18,7);
+  }else{
+    ctx.fillStyle='#8e9a68';ctx.fillRect(-20,-27,40,25);ctx.strokeRect(-20,-27,40,25);
+    ctx.fillStyle='#edc586';ctx.beginPath();ctx.ellipse(0,-23,16,8,-.15,0,Math.PI*2);ctx.fill();ctx.stroke();
+    ctx.strokeStyle='#ab743e';for(let x=-8;x<=8;x+=8){ctx.beginPath();ctx.moveTo(x,-27);ctx.lineTo(x-3,-21);ctx.stroke();}
+  }
+}
+function drawCampaignMarkers(camX) {
+  for(const item of GS.supplies||[]) {
+    if(item.taken||Math.abs(item.x-camX-sceneWidth/2)>sceneWidth)continue;
+    const scale=fighterDepthScale(item.y),elevation=item.broken?Math.sin(item.revealT/28*Math.PI)*45:0;
+    if(!item.broken||item.hasDrop)drawGroundShadow(item.x-camX,item.y,(item.broken?19:43)*scale,elevation);
+    ctx.save();ctx.translate(item.x-camX,item.y);ctx.scale(scale,scale);
+    if(!item.broken)drawSupplyContainer(item.container);
+    else {drawSupplyBreak(item);if(item.hasDrop){ctx.translate(0,-Math.sin(item.revealT/28*Math.PI)*45);drawSupplyIcon(item.kind);}}
+    ctx.restore();
+  }
+  for(const p of GS.pickups) {
+    if(p.taken||Math.abs(p.x-camX-sceneWidth/2)>sceneWidth)continue;
+    drawGroundShadow(p.x-camX,p.y,23);
+    ctx.save();ctx.strokeStyle='#a7e7c4';ctx.lineWidth=2;ctx.strokeRect(p.x-camX-26,p.y-16,52,32);
+    ctx.translate(p.x-camX,p.y);drawSupplyIcon('medkit');ctx.translate(-p.x+camX,-p.y);
+    ctx.fillStyle='#caffdc';ctx.font='12px Courier New';ctx.textAlign='center';ctx.fillText('RESCUE + SUPPLIES',p.x-camX,p.y-42);ctx.restore();
+  }
+}
+function drawCampaignObjective(){
   const node=LEVELS[GS.lvlIdx].route[GS.nodeIndex];
   ctx.save();ctx.fillStyle='rgba(8,10,14,.72)';ctx.fillRect(W/2-255,42,510,30);
   ctx.fillStyle='#e9d6af';ctx.font='12px Courier New';ctx.textAlign='center';

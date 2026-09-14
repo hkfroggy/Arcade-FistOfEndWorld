@@ -20,7 +20,7 @@ atlas=Image.new('RGBA',(cw*6,ch*6))
 for i,(f,anchor) in enumerate(frames):atlas.alpha_composite(f,(round(i%6*cw+cw/2-anchor),(i//6+1)*ch-8-f.height))
 atlas.save(out/'actions.png')
 seq={'walk':[30,0,31,2,32,3,33,5], 'punch_high':list(range(6,12)),'punch_low':list(range(12,18)), 'kick_high':list(range(18,24)),'kick_low':list(range(24,30))}
-updates={'ken_'+state:{'sheet':'assets/sprites/ken-v3/actions.png','regions':[[i%6*cw,i//6*ch,cw,ch] for i in ids],'anchors':[i%6*cw+cw/2 for i in ids],'scale':182/240,'dw':round(cw*182/240),'dh':182} for state,ids in seq.items()}
+updates={'ken_'+state:{'sheet':'assets/sprites/ken-v3/actions.png','regions':[[i%6*cw,i//6*ch,cw,ch] for i in ids],'anchors':[i%6*cw+cw/2 for i in ids],'scale':176/240,'dw':round(cw*176/240),'dh':176} for state,ids in seq.items()}
 for p in [ROOT/'index.html',ROOT/'assets/sprites/manifest.json',ROOT/'assets/sprites/sprites.js',ROOT/'assets/sprites/player-animations.js']:
  raw=p.read_text();pattern=r'window\.(?:SPRITE_MANIFEST|PLAYER_ANIMATIONS)\s*=\s*(\{.*?\});';m=re.search(pattern,raw,re.S) if p.suffix!='.json' else None
  data=json.loads(m[1] if m else raw);target=data.get('sprites',data);target.update(updates)

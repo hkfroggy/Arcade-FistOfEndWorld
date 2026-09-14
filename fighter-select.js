@@ -11,9 +11,11 @@ function drawCharSelect(fr) {
  const colors=['#479bf5','#51d5ba','#b694ee'];
  const titles=['北斗神拳','南斗水鳥拳','北斗有情拳'];
  const traits=['Relentless combinations','Swift cutting strikes','Precise pressure points'];
- const cardW=368,cardH=398,top=146,start=68,gap=20;
- CHAR_DEFS.forEach((cd,i)=>{
-  const x=start+i*(cardW+gap),p1=!!JOIN.sources[0]&&CS.cursors[0]===i,p2=GS.mode==='2p'&&CS.cursors[1]===i,selected=p1||p2;
+ const roster=CHAR_DEFS.filter(cd=>cd.selectable!==false);
+ const cardW=368,cardH=398,top=146,gap=20,start=(W-roster.length*cardW-(roster.length-1)*gap)/2;
+ roster.forEach((cd,slot)=>{
+  const i=cd.id;
+  const x=start+slot*(cardW+gap),p1=!!JOIN.sources[0]&&CS.cursors[0]===i,p2=GS.mode==='2p'&&CS.cursors[1]===i,selected=p1||p2;
   const ready=(p1&&CS.confirmed[0])||(p2&&CS.confirmed[1]);
   ctx.save();ctx.beginPath();ctx.rect(x,top,cardW,cardH);ctx.clip();
   const g=ctx.createLinearGradient(x,top,x+cardW,top+cardH);g.addColorStop(0,selected?'#293647':'#18202e');g.addColorStop(1,'#080e19');ctx.fillStyle=g;ctx.fillRect(x,top,cardW,cardH);

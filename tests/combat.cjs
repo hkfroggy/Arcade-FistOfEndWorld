@@ -5,6 +5,7 @@ const ctx=new Proxy({createLinearGradient:()=>({addColorStop:noop}),createRadial
 const canvas={getContext:()=>ctx,style:{},addEventListener:noop};
 const env={console,Math,Uint8Array,Set,performance:{now:()=>0},window:{addEventListener:noop},document:{getElementById:()=>canvas,createElement:()=>canvas},navigator:{},Image:class{},requestAnimationFrame:noop,setTimeout:noop};
 vm.createContext(env);
+vm.runInContext(fs.readFileSync(require('node:path').join(__dirname,'../arcade.js'),'utf8'),env);
 for(const file of ['i18n.js','i18n-story.js'])vm.runInContext(fs.readFileSync(require('node:path').join(__dirname,'../'+file),'utf8'),env);
 vm.runInContext(fs.readFileSync(require('node:path').join(__dirname,'../opening.js'),'utf8'),env);
 vm.runInContext(fs.readFileSync(require('node:path').join(__dirname,'../fighter-select.js'),'utf8'),env);
@@ -13,7 +14,7 @@ const html=fs.readFileSync(require('node:path').join(__dirname,'../index.html'),
 vm.runInContext(html.split('<script>').at(-1).split('</script>')[0],env);
 let passed=0;
 function test(name,body){vm.runInContext(`
-GS.state='playing';GS.mode='1p';GS.enemies=[];GS.boss=null;hitStop=0;cam.x=0;
+GS.state='playing';GS.mode='1p';GS.projectiles=[];GS.enemies=[];GS.boss=null;hitStop=0;cam.x=0;
 GS.arena=null;GS.nodeIndex=0;GS.pickups=[];GS.routeDelay=0;GS.encounterActive=false;
 P1.charIdx=0;P2.charIdx=1;resetPlayer(P1,100);resetPlayer(P2,210);P1.inactive=false;P1.invincible=0;P1.hp=100;P1.lives=3;P2.inactive=true;
 `,env);env.assert=assert;vm.runInContext(`{${body}}`,env);console.log('PASS',name);passed++;}
@@ -39,7 +40,7 @@ test('Lane and facing checks prevent hits behind or on another depth lane',`
  const e=mkEnemy('heavy',150,GROUND_Y-40),b=mkEnemy('heavy',70,GROUND_Y);GS.enemies=[e,b];
  updatePlayer(P1,0,{punchP:true},0,1000);
  for(let i=0;i<24;i++)updatePlayer(P1,0,{},0,1000);
- assert.equal(e.hp,90);assert.equal(b.hp,90);
+ assert.equal(e.hp,e.maxHp);assert.equal(b.hp,b.maxHp);
 `);
 test('Jump keeps lane, has committed horizontal velocity and landing recovery',`
  P1.y=GROUND_Y-35;updatePlayer(P1,0,{jumpP:true,right:true},0,1000);
@@ -110,7 +111,7 @@ test('Both boss types use interruptible telegraphed strikes and recover',`
 test('Rei and Toki use smooth acceleration, normalized diagonals and precise stops',`
  for(const charIdx of [1,2]) {
   P1.charIdx=charIdx;resetPlayer(P1,100);
-  updatePlayer(P1,0,{right:true},0,1000);assert.equal(P1.x,100.8);
+  updatePlayer(P1,0,{right:true},0,1000);assert.equal(P1.x,100+KEN_MOTION.accel);
   const x=P1.x;updatePlayer(P1,0,{},0,1000);assert.equal(P1.x,x);
   resetPlayer(P1,100);for(let i=0;i<8;i++)updatePlayer(P1,0,{right:true,up:true},0,1000);
   assert(Math.abs(P1.moveX-KEN_MOTION.walkX*Math.SQRT1_2)<1e-9);
@@ -123,13 +124,16 @@ test('Render uses original character draw functions for stagger, fall, rise and 
  startPlayerAttack(P1,'punch');P1.attack.elapsed=6;drawFighter(P1,0);
  assert.equal(seen.at(-1)[4],2*aStep('punch'));CHAR_DEFS[0].drawFn=original;
 `);
-test('Simulation and menu rendering run at 60 ticks across 60/120/144Hz displays',`
+test('Combat stays at 60 ticks while gameplay renders at display refresh',`
  const oldUpdate=update,oldRender=render;let ticks=0,frames=0;
  update=()=>ticks++;render=()=>frames++;
  for(const hz of [60,120,144]){
   lastTick=null;accumulatedTime=0;ticks=0;frames=0;
   for(let i=0;i<=hz;i++)loop(i*1000/hz);
-  assert(ticks>=59&&ticks<=60);assert(frames>=59&&frames<=60);
+  assert(ticks>=59&&ticks<=60);assert.equal(frames,hz+1);
+  GS.state='title';lastTick=null;accumulatedTime=0;ticks=0;frames=0;
+  for(let i=0;i<=hz;i++)loop(i*1000/hz);
+  assert(ticks>=59&&ticks<=60);assert(frames>=59&&frames<=60);GS.state='playing';
  }
  update=oldUpdate;render=oldRender;
 `);
@@ -326,4 +330,255 @@ test('H/K/U keyboard actions do not move or join a second player',`
  keys.KeyU=true;assert(getInput(0).special2P);
  delete keys.KeyH;delete keys.KeyU;clearKeys();JOIN.enabled=false;
 `);
-console.log(passed+' combat checks passed.');
+test('Retina rendering increases backing resolution without changing world size',`
+ window.devicePixelRatio=2;resizeGameCanvas();assert.equal(canvas.width,2560);assert.equal(canvas.height,1440);
+ assert.equal(W,1280);assert.equal(H,720);
+ window.devicePixelRatio=1;resizeGameCanvas();assert.equal(canvas.width,1280);assert.equal(canvas.height,720);
+`);
+test('Playable fighters draw without blur filtering',`
+ const saved=CHAR_DEFS.map(c=>c.drawFn);
+ for(let i=0;i<3;i++){
+  P1.charIdx=i;let drawn=false;
+  CHAR_DEFS[i].drawFn=()=>{drawn=true;assert.equal(ctx.imageSmoothingEnabled,false);};
+  drawFighter(P1,0);assert(drawn);CHAR_DEFS[i].drawFn=saved[i];
+ }
+`);
+test('Knocked-down enemies remain invulnerable for three seconds after landing, then disappear',`
+ const e=mkEnemy('thug',150,GROUND_Y);assert.equal(e.maxHp,68);
+ hitEnemy(P1,e,20,'#fff',true);const hp=e.hp;
+ hitEnemy(P1,e,999,'#fff');assert.equal(e.hp,hp);
+ GS.enemies=[e];doAreaDmg(P1,300,999,'#fff');assert.equal(e.hp,hp);
+ let ticks=0;while(!e.onGround&&ticks++<120)updateEnemy(e);
+ assert(ticks<120);assert.equal(e.groundDownT,180);
+ for(let i=0;i<179;i++){updateEnemy(e);assert(!e.dead);}
+ updateEnemy(e);assert(e.dead);assert.equal(e.hp,hp);
+`);
+test('Map containers reveal meaningful supplies and collect only once',`
+ startLevel(0);const box=GS.supplies[0];assert.equal(box.kind,'water');assert.equal(box.container,'barrel');
+ P1.x=box.x-35;P1.y=box.y;P1.dir=1;P1.hp=30;
+ const random=Math.random;Math.random=()=>.1;
+ try{startPlayerAttack(P1,'kick');doSwingAtk(P1,20,84,'#fff');}finally{Math.random=random;}assert(box.broken);assert(box.revealT>0);
+ P1.x=box.x;const hp=P1.hp;updateCampaignRoute();assert.equal(P1.hp,hp);
+ box.revealT=0;updateCampaignRoute();assert(box.taken);assert.equal(P1.hp,hp+25);
+ updateCampaignRoute();assert.equal(P1.hp,hp+25);
+ assert.equal(containerForMap(4),'cabinet');assert.equal(supplyForMap(4,0),'medkit');
+`);
+test('All fighters punch in the air with a distinct move and one hit per swing',`
+ for(let hero=0;hero<3;hero++){
+  resetPlayer(P1,100);P1.charIdx=hero;P1.inactive=false;P1.onGround=false;P1.z=40;P1.vz=0;
+  const e=mkEnemy('heavy',145,GROUND_Y);GS.enemies=[e];const hp=e.hp;
+  updatePlayer(P1,0,{punchP:true},0,1000);
+  assert.equal(P1.attack.kind,'jumppunch');assert.equal(e.hp,hp);
+  assert.equal(playerVisual(P1,P1.state,0).state,'punch_low');
+  for(let i=0;i<9;i++)updatePlayer(P1,0,{},0,1000);
+  assert.equal(e.hp,hp-COMBAT.jumppunch.damage*2);
+  assert.equal(P1.attack.hits.size,1);
+  resetPlayer(P1,100);P1.onGround=false;P1.z=40;
+  updatePlayer(P1,0,{kickP:true},0,1000);assert.equal(P1.attack.kind,'jumpkick');
+ }
+`);
+test('Movement is 20 percent faster and enemy hit stun lasts 50 percent longer',`
+ assert.equal(KEN_MOTION.walkX,3.72);assert.equal(KEN_MOTION.walkY,1.98);
+ const e=mkEnemy('thug',150,GROUND_Y);GS.enemies=[e];hitEnemy(P1,e,1,'#fff',false);
+ assert.equal(e.stun,35);
+ for(let i=0;i<34;i++)tickEnemyReaction(e);
+ assert.equal(e.state,'stunned');tickEnemyReaction(e);assert.equal(e.state,'approach');
+ for(const revealT of [28,21,14,7,0])drawSupplyBreak({container:'crate',revealT});
+`);
+test('Every regular enemy travels with grounded, distance-driven animation',`
+ for(const type of Object.keys(EDEFS)) {
+  const e=mkEnemy(type,650,GROUND_Y);GS.enemies=[e];e.cooldown=999;
+  const x=e.x;updateEnemy(e);
+  assert(e.x<x,type);assert(Math.abs(e.x-x)<=ENEMY_MOTION.accel+.0001,type);
+  assert(e.stride>0);assert(e.walkBlend>0);
+  const stride=e.stride;e.state='idle';e.walkBlend=0;
+  assert.equal(characterArtPose(e),0);
+  e.state='walk';e.walkBlend=1;e.stride=24;const pose=characterArtPose(e);
+  e.fr+=100;assert.equal(characterArtPose(e),pose,'time alone must not advance feet');
+  e.attack={elapsed:0,startup:17,active:4,recovery:24,target:P1};
+  const before=e.stride;updateEnemy(e);assert.equal(e.stride,before,'attacks plant feet');
+ }
+`);
+test('Arcade timeout, initials, ranking cap and checkpoint continue',`
+ const oldInput=arcadeInput,oldRestore=restoreCheckpoint;arcadeInput=()=>({});
+ P1.score=900;startArcadeContinue();
+ for(let i=0;i<599;i++)updateArcade();assert.equal(GS.state,'gameover');
+ updateArcade();assert.equal(GS.state,'nameentry');assert.equal(arcade.queue[0].score,900);
+ arcadeInput=()=>({up:true});updateArcade();assert.equal(arcade.letters[0],1);
+ arcadeInput=()=>({confirm:true});updateArcade();updateArcade();updateArcade();
+ assert.equal(GS.state,'highscores');assert.equal(arcade.board[0].name,'BAA');
+ assert.equal(arcade.board[0].score,900);
+ startArcadeContinue();arcade.board=Array.from({length:20},(_,i)=>({name:'AAA',score:2000-i}));
+ P1.score=1;qualifyArcadeScores();assert.equal(GS.state,'highscores');assert.equal(arcade.board.length,20);
+ let restored=false;restoreCheckpoint=()=>{restored=true;GS.state='playing';return true;};
+ startArcadeContinue();updateArcade();assert(restored);assert.equal(GS.state,'playing');assert.equal(arcade,null);
+ arcadeInput=oldInput;restoreCheckpoint=oldRestore;
+`);
+test('All boss profiles use distance-driven poses and rendering interpolates safely',`
+ for(const name of Object.keys(BOSS_PROFILES)){
+  const b=mkBoss(name,600);b.state='walk';b.walkBlend=1;b.stride=12;
+  const pose=characterArtPose(b);b.fr+=30;assert.equal(characterArtPose(b),pose);
+  b.state='idle';assert.equal(characterArtPose(b),0);
+ }
+ const e=mkEnemy('thug',200,GROUND_Y);e.state='walk';
+ e.visualPrevious={x:198,state:'walk',dir:e.dir};smoothRender=true;renderAlpha=.5;
+ assert.equal(visualValue(e,'x'),199);e.state='stunned';assert.equal(visualValue(e,'x'),200);
+ smoothRender=false;
+`);
+test('Ken double-tap dash travels three metres, phases through fighters and resists damage',`
+ updatePlayer(P1,0,{right:true},0,2000);updatePlayer(P1,0,{},0,2000);
+ updatePlayer(P1,0,{right:true},0,2000);assert.equal(P1.kenMove.kind,'dash');const x=P1.x;
+ const e=mkEnemy('thug',P1.x,GROUND_Y);GS.enemies=[e];separateFighters();assert.equal(P1.x,x);
+ for(let i=0;i<32;i++){assert.equal(damagePlayer(P1,30,e),false);updatePlayer(P1,0,{},0,2000);}
+ assert.equal(P1.x,x+240);assert.equal(P1.kenMove,null);assert.equal(P1.z,0);
+`);
+test('Ken spin damages once in first revolution and launches on second revolution',`
+ P1.special=40;const e=mkEnemy('heavy',150,GROUND_Y);GS.enemies=[e];const hp=e.hp;
+ updatePlayer(P1,0,{jumpP:true,kickP:true},0,2000);assert.equal(P1.kenMove.kind,'spin');assert.equal(P1.special,0);
+ for(let i=0;i<12;i++)updatePlayer(P1,0,{},0,2000);assert.equal(e.hp,hp-28);
+ for(let i=0;i<24;i++)updatePlayer(P1,0,{},0,2000);assert.equal(e.hp,0);assert.equal(e.state,'knockdown');assert.equal(e.vx,8);
+ for(let i=0;i<12;i++)updatePlayer(P1,0,{},0,2000);assert.equal(P1.kenMove,null);assert(P1.onGround);
+`);
+test('Ken moves reset and spin remains interruptible; Rei does not acquire Ken dash',`
+ P1.special=40;updatePlayer(P1,0,{spinP:true},0,2000);damagePlayer(P1,5);assert.equal(P1.kenMove,null);
+ resetPlayer(P1,100);P1.charIdx=1;updatePlayer(P1,0,{right:true},0,2000);updatePlayer(P1,0,{},0,2000);updatePlayer(P1,0,{right:true},0,2000);assert.equal(P1.kenMove,null);
+`);
+
+test('Rei net travels five metres and only strikes enemies in front within its lane once',`
+ P1.charIdx=1;P1.x=600;P1.dir=-1;
+ const near=mkEnemy('heavy',520,GROUND_Y),edge=mkEnemy('heavy',201,GROUND_Y),far=mkEnemy('heavy',190,GROUND_Y),behind=mkEnemy('heavy',660,GROUND_Y),off=mkEnemy('heavy',400,GROUND_Y+60);
+ GS.enemies=[near,edge,far,behind,off];const hp=near.hp;
+ updatePlayer(P1,0,{left:true},0,2000);updatePlayer(P1,0,{},0,2000);updatePlayer(P1,0,{left:true},0,2000);
+ assert.equal(P1.reiMove.kind,'net');
+ for(let i=0;i<8;i++)updatePlayer(P1,0,{},0,2000);assert.equal(near.hp,hp);
+ for(let i=0;i<20;i++)updatePlayer(P1,0,{},0,2000);
+ assert.equal(near.hp,hp-24);assert.equal(edge.hp,hp-24);
+ for(const e of [far,behind,off])assert.equal(e.hp,hp);
+ for(let i=0;i<16;i++)updatePlayer(P1,0,{},0,2000);
+ assert.equal(P1.reiMove,null);assert.equal(near.hp,hp-24);
+`);
+test('Rei bird rises, locks a forward landing point and hits once with knockdown',`
+ P1.charIdx=1;P1.special=40;
+ const e=mkEnemy('heavy',330,GROUND_Y);GS.enemies=[e];const hp=e.hp;
+ updatePlayer(P1,0,{spinP:true},0,2000);assert.equal(P1.reiMove.kind,'bird');assert.equal(P1.special,0);
+ for(let i=0;i<24;i++)updatePlayer(P1,0,{},0,2000);assert.equal(P1.z,240);assert.equal(e.hp,hp);
+ e.x=340;assert.equal(P1.reiMove.targetX,330);
+ for(let i=0;i<8;i++)updatePlayer(P1,0,{},0,2000);assert.equal(P1.z,240);
+ for(let i=0;i<8;i++)updatePlayer(P1,0,{},0,2000);
+ assert.equal(P1.x,330);assert.equal(P1.z,0);assert.equal(e.hp,0);assert.equal(e.state,'knockdown');
+ for(let i=0;i<12;i++)updatePlayer(P1,0,{},0,2000);assert.equal(P1.reiMove,null);assert.equal(e.hp,0);
+`);
+test('Rei specials respect energy, interruption, boundaries and reset',`
+ P1.charIdx=1;P1.special=39;updatePlayer(P1,0,{spinP:true},0,500);assert.equal(P1.reiMove,null);
+ P1.special=40;updatePlayer(P1,0,{spinP:true},0,250);assert.equal(P1.reiMove.targetX,220);
+ for(let i=0;i<15;i++)updatePlayer(P1,0,{},0,250);
+ assert(damagePlayer(P1,5));assert.equal(P1.reiMove,null);assert(!P1.onGround);
+ resetPlayer(P1,100);assert.equal(P1.reiMove,null);assert.equal(P1.forwardTapT,0);
+`);
+test('Jump plus kick input activates Rei bird while three-button super retains priority',`
+ JOIN.enabled=false;P1.charIdx=1;P1.special=100;
+ keys.KeyU=true;keys.KeyK=true;jp.KeyU=true;jp.KeyK=true;
+ const inp=getInput(0);assert(inp.spinP);updatePlayer(P1,0,inp,0,2000);assert.equal(P1.reiMove.kind,'bird');
+ resetPlayer(P1,100);keys.KeyH=true;jp.KeyH=true;const superInput=getInput(0);assert(superInput.special2P);assert(!superInput.spinP);
+ for(const k of ['KeyU','KeyK','KeyH']){delete keys[k];delete jp[k];}
+`);
+
+test('Zoomed camera shows seventy percent of the original world width',`
+ assert.equal(GAMEPLAY_ZOOM,1/.7);assert(Math.abs(gameplayViewWidth()-W*.7)<.001);
+ cam.maxX=LEVEL_W-gameplayViewWidth();P1.x=LEVEL_W-40;updateCam(PLAYERS,LEVEL_W);
+ assert(cam.tx+gameplayViewWidth()<=LEVEL_W+.001);
+ GS.arena={left:1000,right:2280};P1.x=1640;updateCam(PLAYERS,2280);
+ assert(cam.tx>=GS.arena.left);assert(cam.tx+gameplayViewWidth()<=GS.arena.right);
+ drawGameplayScene();assert.equal(sceneWidth,W);assert.equal(sceneTop,0);assert.equal(sceneBottom,H);
+`);
+test('Supply drops use a single twenty-percent roll and empty containers still break',`
+ const random=Math.random;let rolls=0;
+ try{
+  Math.random=()=>{rolls++;return .1999;};const yes={};breakSupply(yes);assert(yes.hasDrop);breakSupply(yes);assert.equal(rolls,1);
+  Math.random=()=>.2;const no={x:P1.x,y:P1.y,kind:'water'};breakSupply(no);assert(!no.hasDrop);assert.equal(no.revealT,28);
+  GS.supplies=[no];P1.hp=20;no.revealT=0;updateCampaignRoute();assert(no.taken);assert.equal(P1.hp,20);
+ }finally{Math.random=random;}
+`);
+test('Gunner fires once then idles for fifteen seconds without melee damage',`
+ const e=mkEnemy('gunner',350,GROUND_Y);GS.enemies=[e];const hp=P1.hp;
+ updateEnemy(e);assert.equal(e.attack.weapon,'shotgun');
+ for(let i=0;i<41;i++)updateEnemy(e);assert.equal(GS.projectiles.length,0);assert.equal(P1.hp,hp);
+ updateEnemy(e);assert.equal(GS.projectiles.length,1);assert.equal(P1.hp,hp);
+ while(e.attack)updateEnemy(e);const x=e.x;
+ for(let i=0;i<900;i++){updateEnemy(e);assert.equal(e.attack,null);assert.equal(e.state,'idle');}
+ assert.equal(e.x,x);assert.equal(GS.projectiles.length,1);updateEnemy(e);assert(e.attack);
+`);
+test('Jagi fires exactly three shots then waits fifteen seconds',`
+ const b=mkBoss('Jagi',350);b.state='idle';GS.boss=b;
+ updateBoss(b);assert(b.attack.weapon);
+ for(let i=1;i<=78;i++){
+  updateBoss(b);assert.equal(GS.projectiles.length,i<42?0:i<60?1:i<78?2:3);
+ }
+ while(b.attack)updateBoss(b);
+ for(let i=0;i<900;i++){updateBoss(b);assert.equal(b.attack,null);assert.equal(b.state,'idle');}
+ assert.equal(GS.projectiles.length,3);updateBoss(b);assert(b.attack);
+`);
+test('Knife releases three small knives and projectile hits can be jumped or sidestepped',`
+ const e=mkEnemy('knife',250,GROUND_Y);GS.enemies=[e];updateEnemy(e);
+ for(let i=0;i<30;i++)updateEnemy(e);
+ assert.equal(GS.projectiles.length,3);assert(GS.projectiles.every(q=>q.kind==='knife'));assert.equal(new Set(GS.projectiles.map(q=>q.vy)).size,3);
+ const hp=P1.hp;for(let i=0;i<25;i++)updateEnemyProjectiles();assert.equal(P1.hp,hp-12);
+ P1.invincible=0;P1.stun=0;P1.onGround=false;P1.z=130;GS.projectiles=[];
+ fireEnemyWeapon(e,{fired:0});for(let i=0;i<25;i++)updateEnemyProjectiles();assert.equal(P1.hp,hp-12);
+ P1.z=0;P1.y=GROUND_Y+100;GS.projectiles=[];fireEnemyWeapon(e,{fired:0});for(let i=0;i<25;i++)updateEnemyProjectiles();assert.equal(P1.hp,hp-12);
+`);
+test('Interrupting a burst stops pending shots and cannot bypass its firing wait',`
+ const e=mkEnemy('gunner',300,GROUND_Y);GS.enemies=[e];updateEnemy(e);
+ for(let i=0;i<42;i++)updateEnemy(e);hitEnemy(P1,e,1,'#fff');assert.equal(e.attack,null);assert.equal(e.weaponWait,900);
+ for(let i=0;i<50;i++)updateEnemy(e);assert.equal(GS.projectiles.length,1);assert(e.weaponWait>0);
+ startLevel(0);assert.equal(GS.projectiles.length,0);
+`);
+
+test('Shield enemies block frontal hits for exactly five percent without knockdown',`
+ for(const boss of [false,true]){
+  const e=boss?mkBoss('Shield Captain',200):mkEnemy('shield',200,GROUND_Y);e.state='idle';e.dir=-1;e.invincible=0;
+  const hit=dmg=>boss?hitBoss(P1,e,dmg):hitEnemy(P1,e,dmg,'#fff',true),hp=e.hp;
+  hit(12);assert(Math.abs(e.hp-(hp-.6))<.00001);assert(e.blockT>0);assert.equal(e.stun,0);assert(!e.downT);
+  e.blockT=0;P1.x=250;const rearHp=e.hp;hit(20);assert.equal(e.hp,boss?rearHp-20:0);P1.x=100;
+ }
+`);
+test('Shield guard opens during attack and recovery and cannot block while stunned',`
+ const e=mkEnemy('shield',200,GROUND_Y);e.dir=-1;e.state='attack';
+ e.attack={elapsed:0,startup:10,active:4,recovery:20};assert(shieldBlocks(P1,e));
+ e.attack.elapsed=10;assert(!shieldBlocks(P1,e));e.attack.elapsed=15;assert(!shieldBlocks(P1,e));
+ e.attack=null;e.stun=10;assert(!shieldBlocks(P1,e));
+`);
+test('All enemy and boss types stay grounded for 180 ticks and award defeat score once',`
+ for(const e of [...Object.keys(EDEFS).map(k=>mkEnemy(k,300,GROUND_Y)),...Object.keys(BOSS_PROFILES).map(k=>mkBoss(k,300))]){
+  e.state='idle';const score=P1.score;beginEnemyFall(e,P1);beginEnemyFall(e,P1);
+  assert.equal(P1.score,score+(e.profile?2000:100));assert(!canReceiveHit(e));
+  let ticks=0;while(!e.onGround&&ticks++<100)updateEnemyFall(e);assert(ticks<100);
+  assert.equal(e.groundDownT,180);assert(!e.dead);
+  for(let i=0;i<179;i++)updateEnemyFall(e);assert(!e.dead);updateEnemyFall(e);assert(e.dead);
+ }
+`);
+test('Boss defeat remains visible and only clears the stage after its grounded countdown',`
+ startLevel(0);GS.enemies=[];const b=mkBoss('Spade',300);GS.boss=b;b.state='idle';b.hp=1;
+ hitBoss(P1,b,30);assert(b.fallen);assert(!b.dead);assert.equal(GS.state,'playing');
+ while(!b.onGround)updateBoss(b);
+ for(let i=0;i<179;i++)updateBoss(b);assert.equal(GS.state,'playing');
+ updateBoss(b);assert.equal(GS.state,'levelclear');
+`);
+test('Head, upper and lower hits apply 200, 100 and 70 percent damage to every fighter class',`
+ for(const [zone,damage] of [['head',40],['upper',20],['lower',14]]){
+  const e=mkEnemy('heavy',200,GROUND_Y),hp=e.hp;hitEnemy(P1,e,20,'#fff',false,zone);assert.equal(e.hp,hp-damage);
+  const b=mkBoss('Spade',200);b.state='idle';const bhp=b.hp;hitBoss(P1,b,20,zone);assert.equal(b.hp,bhp-damage);
+  resetPlayer(P1,100);P1.invincible=0;P1.hp=100;damagePlayer(P1,20,e,zone);assert.equal(P1.hp,100-damage);
+ }
+`);
+test('Attack heights, airborne projectile zones and shield reduction compose correctly',`
+ assert.equal(attackHitZone({variant:'high'}),'head');assert.equal(attackHitZone({variant:'low'}),'lower');
+ assert.equal(attackHitZone({variant:'middle'}),'upper');
+ const height=fighterHitHeight(P1);P1.z=30;
+ assert.equal(projectileHitZone({z:30+height*.9},P1),'head');assert.equal(projectileHitZone({z:30+height*.6},P1),'upper');assert.equal(projectileHitZone({z:30+height*.3},P1),'lower');
+ P1.z=0;for(const boss of [false,true]){
+  const e=boss?mkBoss('Shield Captain',200):mkEnemy('shield',200,GROUND_Y);e.state='idle';e.dir=-1;const hp=e.hp;
+  if(boss)hitBoss(P1,e,20,'head');else hitEnemy(P1,e,20,'#fff',false,'head');assert.equal(e.hp,hp-2);
+ }
+`);
+console.log(`${passed} combat checks passed.`);

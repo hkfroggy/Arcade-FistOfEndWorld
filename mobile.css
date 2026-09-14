@@ -1,0 +1,27 @@
+/* Preserve the full game view; portrait reserves a separate thumb area. */
+#touchControls, #mobileSettings { display:none; }
+@media (pointer:coarse), (max-width:900px) {
+  html body { min-height:100dvh; height:100dvh; justify-content:flex-start; padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); overscroll-behavior:none; }
+  body #gameCanvas { width:min(100%, calc((100dvh - 220px) * 16 / 9)); border:0; margin:auto 0; }
+  body #hint, body #languagePicker, body #debugBar { display:none; }
+  body.mobile-settings #languagePicker, body.mobile-settings #debugBar { display:flex; position:fixed; z-index:12; background:#15151f; left:8px; right:8px; padding:12px; }
+  body.mobile-settings #languagePicker { top:48px; }
+  body.mobile-settings #debugBar { top:100px; }
+  #mobileSettings { display:block; position:fixed; right:max(10px,env(safe-area-inset-right)); top:max(8px,env(safe-area-inset-top)); z-index:15; background:#191923dd; color:white; border:1px solid #aa8d62; border-radius:8px; padding:9px 12px; }
+  #touchControls { display:block; flex:none; width:100%; height:210px; position:relative; z-index:10; touch-action:none; user-select:none; -webkit-user-select:none; }
+  #touchStick { position:absolute; left:20px; bottom:32px; width:138px; height:138px; border-radius:50%; background:#14152299; border:2px solid #ad9b7977; touch-action:none; }
+  #touchStick::before { content:'✚'; position:absolute; inset:0; display:grid; place-items:center; font:88px sans-serif; color:#c4b59544; }
+  #touchKnob { position:absolute; width:50px; height:50px; left:42px; top:42px; border-radius:50%; background:#d3b57888; pointer-events:none; }
+  #touchActions { position:absolute; right:14px; bottom:20px; display:grid; grid-template-columns:repeat(3,58px); gap:8px; }
+  #touchActions button { min-height:58px; border-radius:50%; border:2px solid #d6b56b99; background:#242536bb; color:#fff; font:bold 11px sans-serif; touch-action:none; }
+  #touchActions button.active { background:#a54827dd; transform:scale(.95); }
+  #touchActions .wide { border-radius:16px; min-height:40px; }
+  @media (orientation:landscape) {
+    body #gameCanvas { width:min(100%, calc(100dvh * 16 / 9)); margin:auto; }
+    #touchControls { position:fixed; inset:0; height:100%; pointer-events:none; }
+    #touchStick, #touchActions { pointer-events:auto; bottom:max(12px,env(safe-area-inset-bottom)); }
+    #touchStick { left:max(14px,env(safe-area-inset-left)); width:120px; height:120px; }
+    #touchKnob { left:33px; top:33px; }
+    #touchActions { right:max(14px,env(safe-area-inset-right)); }
+  }
+}

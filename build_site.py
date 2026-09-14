@@ -5,7 +5,7 @@ root=Path(__file__).resolve().parent
 out=root/'dist'
 if out.exists(): shutil.rmtree(out)
 out.mkdir()
-for pattern in ('*.html','*.js'):
+for pattern in ('*.html','*.js','*.css'):
  for source in root.glob(pattern): shutil.copy2(source,out/source.name)
 def ignore(path,names):
  return [n for n in names if n in ('sources','source.png','packed-source.png','.DS_Store') or n.endswith(('.md','.py'))]
@@ -16,7 +16,8 @@ from PIL import Image
 import json
 for source in list(out.rglob('*.png')):
  with Image.open(source) as img:
-  img.save(source.with_suffix('.webp'),'WEBP',quality=92,method=4)
+  fighter=source.relative_to(out).as_posix().startswith(('assets/sprites/ken','assets/sprites/rei','assets/sprites/toki'))
+  img.save(source.with_suffix('.webp'),'WEBP',lossless=fighter,quality=92,method=4)
  source.unlink()
 for source in out.rglob('*'):
  if source.suffix in ('.html','.js','.json'):

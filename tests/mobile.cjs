@@ -1,0 +1,18 @@
+const vm=require('node:vm'),fs=require('node:fs'),assert=require('node:assert/strict');
+function element(keys='') { return {dataset:{keys},style:{},events:{},classList:{add(){},remove(){},toggle(){return true;}},setAttribute(){},setPointerCapture(){},addEventListener(k,f){this.events[k]=f;},getBoundingClientRect(){return {left:0,top:0,width:120,height:120};},querySelectorAll(){return []}}; }
+const stick=element(),knob=element(),punch=element('KeyH'),kick=element('KeyK'),special=element('KeyH,KeyK'),controls=element();
+controls.querySelectorAll=q=>q==='button'?[punch,kick,special]:[];
+const pressed=[],events={},docEvents={};let count=0;
+const window={mobileKeyPress:c=>pressed.push(c),addEventListener:(k,f)=>events[k]=f};
+const document={body:{append(){},classList:{toggle(){return true;}}},createElement:()=>count++===0?controls:element(),getElementById:id=>id==='touchStick'?stick:knob,addEventListener:(k,f)=>docEvents[k]=f};
+vm.runInNewContext(fs.readFileSync('mobile-controls.js','utf8'),{window,document,Map,Set,Math});
+const event=(id,x=60,y=60)=>({pointerId:id,clientX:x,clientY:y,preventDefault(){}});
+stick.events.pointerdown(event(1,110,10));punch.events.pointerdown(event(2));
+assert(window.MOBILE_INPUT.KeyD && window.MOBILE_INPUT.KeyW && window.MOBILE_INPUT.KeyH);
+special.events.pointerdown(event(3));punch.events.pointerup(event(2));
+assert(window.MOBILE_INPUT.KeyH && window.MOBILE_INPUT.KeyK,'overlapping buttons retain held keys');
+special.events.pointercancel(event(3));assert(!window.MOBILE_INPUT.KeyH && window.MOBILE_INPUT.KeyD);
+stick.events.pointermove(event(1));assert.equal(Object.keys(window.MOBILE_INPUT).length,0,'dead zone releases movement');
+kick.events.pointerdown(event(4));events.blur();assert.equal(Object.keys(window.MOBILE_INPUT).length,0);
+assert(pressed.includes('KeyH') && pressed.includes('KeyK'));
+console.log('PASS Touch diagonals, simultaneous attacks, overlapping buttons, dead zone, cancellation and blur reset');
