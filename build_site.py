@@ -8,7 +8,7 @@ out.mkdir()
 for pattern in ('*.html','*.js','*.css'):
  for source in root.glob(pattern): shutil.copy2(source,out/source.name)
 def ignore(path,names):
- return [n for n in names if n in ('sources','source.png','packed-source.png','.DS_Store') or n.endswith(('.md','.py'))]
+ return [n for n in names if n in ('sources','source.png','packed-source.png','.DS_Store') or n.endswith(('.md','.py','-source.png'))]
 shutil.copytree(root/'assets',out/'assets',ignore=ignore)
 print('Static game staged in dist')
 # WebP keeps the hosted download small while preserving the original PNG artwork.
