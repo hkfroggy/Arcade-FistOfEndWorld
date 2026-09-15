@@ -3,6 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- Google tag (gtag.js): the same GA4 stream is used in every environment. -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8RVNFE3R2G"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-8RVNFE3R2G');
+</script>
+<script src="analytics.js" defer></script>
 <link rel="stylesheet" href="mobile.css">
 <script src="mobile-controls.js" defer></script>
 <title>北斗の拳 — Fist of the North Star: Wasteland Brawler</title>
@@ -4164,6 +4173,12 @@ function loop(now) {
     render();
     if(didTick){clearKeys();updateGpPrev();}
   }
+  window.GAME_ANALYTICS?.observe(GS.state,{
+    mode:GS.mode,
+    playerCount:GS.mode==='2p'?2:1,
+    levelNumber:GS.lvlIdx+1,
+    fighter:CHAR_DEFS[P1.charIdx]?.name||'Unknown'
+  });
   smoothRender=false;
   requestAnimationFrame(loop);
 }
