@@ -88,6 +88,8 @@ test('Expanded routes spawn complete larger groups with safe arena placement',`
   startLevel(chapter);const level=LEVELS[chapter];assert(level.bossX>=4920);
   for(const n of level.route.filter(n=>n.kind==='fight')){
    GS.enemies=[];beginEncounter(n);assert.equal(GS.enemies.length,n.roles.length);
+   assert(GS.enemies.some(e=>e.x<n.x));assert(GS.enemies.some(e=>e.x>n.x));
+   assert(GS.enemies.some(e=>e.flankEnabled));
    assert(n.roles.length>=(chapter===0&&n.originalIndex===0?4:6));
    for(const e of GS.enemies){assert(e.x>GS.arena.left&&e.x<GS.arena.right);assert(e.y>=LANE_BACK&&e.y<=LANE_FRONT);}
   }

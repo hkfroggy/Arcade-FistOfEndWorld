@@ -218,10 +218,12 @@ function beginEncounter(node) {
     showDialog(node.text||[node.name.toUpperCase(), 'Read the tell. Counter the recovery.'],200);
   } else {
     node.roles.forEach((role,i)=>{
-      const fromLeft=GS.lvlIdx>0&&i%4===3;
-      const column=Math.floor(i/3),lane=i%3;
+      const fromLeft=i%2===1;
+      const column=Math.floor(i/2),lane=i%3;
       const x=fromLeft?left+65+column*42:left+W-130-column*85;
-      GS.enemies.push(mkEnemy(role,x,LANE_BACK+12+lane*40));
+      const enemy=mkEnemy(role,x,LANE_BACK+12+lane*40);
+      enemy.flankEnabled=i%3===1;enemy.flankCooldown=0;
+      GS.enemies.push(enemy);
     });
     showDialog([node.name.toUpperCase(),node.rescue?'Clear the area; visit the upper lane to rescue survivors.':'Clear the encounter to continue.'],130);
   }

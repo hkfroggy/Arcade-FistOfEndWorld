@@ -2355,6 +2355,7 @@ function projectileHitZone(projectile,target){
   const height=(projectile.z-(target.z||0))/fighterHitHeight(target);
   return height>=.82?'head':height<.45?'lower':'upper';
 }
+function blockerStunMultiplier(e){return e.type==='shield'||e.profile?.guard?2:1;}
 function shieldBlocks(shooter,e){
   return (e.type==='shield'||e.name==='Shield Captain')&&e.onGround&&!e.stun&&!e.downT&&!e.riseT&&
     (shooter.x-e.x)*e.dir>=0&&(!e.attack||e.attack.elapsed<e.attack.startup);
@@ -2409,7 +2410,7 @@ function hitEnemy(shooter,e,dmg,clr,knockdown=false,zone='upper') {
   if(e.hp<=0||knockdown) {
     beginEnemyFall(e,shooter,knockdown?5:4);
   } else {
-    e.state='stunned';e.stun=COMBAT.enemyStun;e.vx=away*2.1;
+    e.state='stunned';e.stun=COMBAT.enemyStun*blockerStunMultiplier(e);e.vx=away*2.1;
   }
 }
 function hitBoss(shooter,b,dmg,zone='upper') {
@@ -2428,7 +2429,7 @@ function hitBoss(shooter,b,dmg,zone='upper') {
     beginEnemyFall(b,shooter,4);
     addFlash('#ff0000',.35);addShake(8);
   } else {
-    if(!guarded){b.state='stunned';b.stun=21;b.vx=(b.x>=shooter.x?1:-1)*1.3;}
+    if(!guarded){b.state='stunned';b.stun=21*blockerStunMultiplier(b);b.vx=(b.x>=shooter.x?1:-1)*1.3;}
     if(b.hp<b.maxHp*.5&&b.phase===1){b.phase=2;spawnTxt(b.x,b.y-160,'ENRAGED!','#f00',18);}
   }
 }
@@ -2496,6 +2497,31 @@ function fireEnemyWeapon(e,a){
  a.fired++;e.weaponWait=c.wait;
  if(c.kind==='shotgun')beep(85,.14,.2,'sawtooth',35);else beep(520,.08,.09,'triangle',180);
 }
+// Some squad members take a lane around the player before closing from behind.
+function updateEnemyFlank(e,target){
+ if(!e.flankEnabled)return false;
+ if(e.flankCooldown>0){e.flankCooldown--;return false;}
+ if(!e.flankRoute){
+  const side=e.x>=target.x?1:-1;
+  const lane=target.y<(LANE_BACK+LANE_FRONT)/2?LANE_FRONT-5:LANE_BACK+5;
+  const behind=clmp(target.x-side*110,(GS.arena?.left||0)+45,(GS.arena?.right||LEVEL_W)-45);
+  e.flankRoute={lane,x:behind,phase:0,ticks:0};
+ }
+ const route=e.flankRoute;route.ticks++;
+ if(route.phase===0&&Math.abs(e.y-route.lane)<6)route.phase=1;
+ if(route.ticks>240||(route.phase===1&&Math.abs(e.x-route.x)<12)){
+  e.flankRoute=null;e.flankCooldown=240+Math.floor(Math.random()*180);return false;
+ }
+ const speed=(e.def?.spd||e.spd)*.72;
+ const dx=route.phase===0?0:route.x-e.x,dy=route.lane-e.y;
+ const diagonal=Math.abs(dx)>6&&Math.abs(dy)>5?Math.SQRT1_2:1;
+ e.moveX=approachSpeed(e.moveX||0,Math.abs(dx)>6?Math.sign(dx)*speed*diagonal:0,ENEMY_MOTION.accel);
+ e.moveY=approachSpeed(e.moveY||0,Math.abs(dy)>5?Math.sign(dy)*speed*.8*diagonal:0,ENEMY_MOTION.accel);
+ e.x=clmp(e.x+e.moveX,(GS.arena?.left||0)+22,(GS.arena?.right||LEVEL_W)-22);
+ e.y=clmp(e.y+e.moveY,LANE_BACK,LANE_FRONT);
+ if(Math.abs(e.moveX)>.05)e.dir=Math.sign(e.moveX);
+ setFighterState(e,'walk');return true;
+}
 function updateWeaponEnemy(e){
  const c=ENEMY_WEAPONS[enemyWeaponKey(e)];if(!c)return false;
  if(e.attack){
@@ -2506,6 +2532,7 @@ function updateWeaponEnemy(e){
  }
  if(e.weaponWait>0){e.weaponWait--;e.moveX=0;e.moveY=0;setFighterState(e,'idle');return true;}
  const target=nearestPlayer(e.x,e.y);if(!target)return true;
+ if(updateEnemyFlank(e,target))return true;
  const dx=target.x-e.x,dy=target.y-e.y;e.dir=dx>=0?1:-1;
  if(Math.abs(dx)<=c.range&&Math.abs(dy)<=COMBAT.lane&&e.x>=cam.x+10&&e.x<=cam.x+gameplayViewWidth()-10){
   e.attack={weapon:c.kind,fired:0,elapsed:0,startup:c.startup,active:(c.shots-1)*c.gap+3,recovery:c.recovery,range:c.range,lane:23,damage:c.damage,target,hits:new Set()};
@@ -2583,6 +2610,7 @@ function updateHostile(e,boss=false) {
     return;
   }
   const target=nearestPlayer(e.x,e.y);if(!target)return;
+  if(!boss&&updateEnemyFlank(e,target))return;
   const dx=target.x-e.x,dy=target.y-e.y;
   e.dir=dx>=0?1:-1;
   const roleMove=e.def?.roleMove?MOVE_LIBRARY[e.def.roleMove]:null;

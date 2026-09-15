@@ -581,4 +581,21 @@ test('Attack heights, airborne projectile zones and shield reduction compose cor
   if(boss)hitBoss(P1,e,20,'head');else hitEnemy(P1,e,20,'#fff',false,'head');assert.equal(e.hp,hp-2);
  }
 `);
+test('Squad flankers change lane, move behind the player and then resume normal pursuit',`
+ P1.x=300;P1.y=GROUND_Y;GS.arena={left:0,right:1280};
+ const e=mkEnemy('gang',420,GROUND_Y);e.flankEnabled=true;e.flankCooldown=0;
+ const y=e.y;assert(updateEnemyFlank(e,P1));assert(e.y<y);assert.equal(e.x,420);
+ let steps=0;while(e.flankRoute&&steps++<300)updateEnemyFlank(e,P1);
+ assert(steps<240);assert(e.x<P1.x);assert(e.flankCooldown>0);assert(e.y>=LANE_BACK&&e.y<=LANE_FRONT);
+ e.attack={elapsed:0,startup:17,active:4,recovery:24,target:P1};const x=e.x;updateEnemy(e);assert.equal(e.x,x);
+`);
+test('Every blocking enemy takes double stun when its guard is bypassed',`
+ const shield=mkEnemy('shield',200,GROUND_Y);shield.dir=1;
+ hitEnemy(P1,shield,1,'#fff');assert.equal(shield.stun,COMBAT.enemyStun*2);
+ for(const name of ['Shield Captain','Heart','Souther']){
+  const b=mkBoss(name,200);b.state='idle';b.dir=1;hitBoss(P1,b,1);assert.equal(b.stun,42);
+ }
+ const normal=mkEnemy('thug',200,GROUND_Y);hitEnemy(P1,normal,1,'#fff');assert.equal(normal.stun,COMBAT.enemyStun);
+ const spade=mkBoss('Spade',200);spade.state='idle';hitBoss(P1,spade,1);assert.equal(spade.stun,21);
+`);
 console.log(`${passed} combat checks passed.`);
