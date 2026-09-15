@@ -12,16 +12,28 @@
   #touchStick { position:absolute; left:20px; bottom:32px; width:138px; height:138px; border-radius:50%; background:#14152299; border:2px solid #ad9b7977; touch-action:none; }
   #touchStick::before { content:'✚'; position:absolute; inset:0; display:grid; place-items:center; font:88px sans-serif; color:#c4b59544; }
   #touchKnob { position:absolute; width:50px; height:50px; left:42px; top:42px; border-radius:50%; background:#d3b57888; pointer-events:none; }
-  #touchActions { position:absolute; right:14px; bottom:20px; display:grid; grid-template-columns:repeat(3,58px); gap:8px; }
-  #touchActions button { min-height:58px; border-radius:50%; border:2px solid #d6b56b99; background:#242536bb; color:#fff; font:bold 11px sans-serif; touch-action:none; }
-  #touchActions button.active { background:#a54827dd; transform:scale(.95); }
-  #touchActions .wide { border-radius:16px; min-height:40px; }
+  #touchStart { position:absolute; z-index:2; left:50%; bottom:8px; width:72px; height:34px; transform:translateX(-50%); border:1px solid #d6b56baa; border-radius:18px; background:linear-gradient(180deg,#3c3d4ecc,#1b1c29ee); box-shadow:inset 0 1px 1px #ffffff33,0 4px 10px #0008; color:#f6e4bd; font:bold 10px sans-serif; letter-spacing:1.4px; touch-action:none; }
+  #touchStart.active { background:#8d3b25ee; transform:translateX(-50%) scale(.94); }
+  #touchActions { position:absolute; right:8px; bottom:20px; width:190px; height:164px; }
+  #touchActions::before { content:''; position:absolute; right:2px; top:25px; width:165px; height:118px; border:2px solid #d6b56b33; border-left-color:transparent; border-bottom-color:transparent; border-radius:50%; transform:rotate(-10deg); pointer-events:none; }
+  #touchActions button { position:absolute; border:2px solid #d6b56baa; background:radial-gradient(circle at 35% 25%,#55586acc 0,#292a3ddd 45%,#171824ee 100%); box-shadow:inset 0 2px 2px #ffffff2b,0 5px 12px #0009; color:#fff; font:bold 10px sans-serif; letter-spacing:.2px; touch-action:none; }
+  #touchActions button.active { background:radial-gradient(circle at 35% 25%,#df7650 0,#a54827 55%,#5f2418 100%); box-shadow:inset 0 2px 3px #ffffff44,0 2px 6px #0008; transform:scale(.93); }
+  #touchActions .action { width:62px; height:62px; border-radius:48% 52% 50% 50% / 56% 56% 44% 44%; }
+  #touchActions .punch { left:0; top:83px; }
+  #touchActions .kick { left:62px; top:38px; }
+  #touchActions .jump { right:0; top:72px; }
+  #touchActions .combo { top:0; width:70px; height:29px; border-radius:15px 15px 20px 20px; border-width:1px; color:#e8d6b2; font-size:9px; }
+  #touchActions .special { left:27px; transform:rotate(-7deg); }
+  #touchActions .super { right:21px; transform:rotate(7deg); }
+  #touchActions .special.active { transform:rotate(-7deg) scale(.93); }
+  #touchActions .super.active { transform:rotate(7deg) scale(.93); }
   @media (orientation:landscape) {
     body #gameCanvas { width:min(100%, calc(100dvh * 16 / 9)); margin:auto; }
     #touchControls { position:fixed; inset:0; height:100%; pointer-events:none; }
-    #touchStick, #touchActions { pointer-events:auto; bottom:max(12px,env(safe-area-inset-bottom)); }
+    #touchStick, #touchActions, #touchStart { pointer-events:auto; bottom:max(12px,env(safe-area-inset-bottom)); }
     #touchStick { left:max(14px,env(safe-area-inset-left)); width:120px; height:120px; }
     #touchKnob { left:33px; top:33px; }
     #touchActions { right:max(14px,env(safe-area-inset-right)); }
+    #touchStart { width:68px; height:31px; }
   }
 }

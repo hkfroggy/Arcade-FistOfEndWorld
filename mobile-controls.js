@@ -4,7 +4,7 @@
   const pointers = new Map();
   const controls = document.createElement('div');
   controls.id = 'touchControls';
-  controls.innerHTML = `<div id="touchStick" role="group" aria-label="Move"><div id="touchKnob"></div></div><div id="touchActions"><button class="wide" data-keys="KeyH,KeyK" aria-label="Special attack">SPECIAL</button><button class="wide" data-keys="KeyU,KeyH,KeyK" aria-label="Super attack">SUPER</button><button class="wide" data-keys="Enter" aria-label="Start or confirm">START</button><button data-keys="KeyH">PUNCH</button><button data-keys="KeyK">KICK</button><button data-keys="KeyU">JUMP</button></div>`;
+  controls.innerHTML = `<div id="touchStick" role="group" aria-label="Move"><div id="touchKnob"></div></div><button id="touchStart" data-keys="Enter" aria-label="Start or confirm">START</button><div id="touchActions" role="group" aria-label="Actions"><button class="combo special" data-keys="KeyH,KeyK" aria-label="Special attack">SPECIAL</button><button class="combo super" data-keys="KeyU,KeyH,KeyK" aria-label="Super attack">SUPER</button><button class="action punch" data-keys="KeyH">PUNCH</button><button class="action kick" data-keys="KeyK">KICK</button><button class="action jump" data-keys="KeyU">JUMP</button></div>`;
   document.body.append(controls);
   const settings = document.createElement('button');
   settings.id = 'mobileSettings'; settings.textContent = '⚙';
