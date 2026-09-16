@@ -14,7 +14,7 @@ const html=fs.readFileSync(require('node:path').join(__dirname,'../index.html'),
 vm.runInContext(html.split('<script>').at(-1).split('</script>')[0],env);
 let passed=0;
 function test(name,body){vm.runInContext(`
-GS.state='playing';GS.mode='1p';GS.projectiles=[];GS.enemies=[];GS.boss=null;hitStop=0;cam.x=0;
+resetSuperFX();GS.state='playing';GS.mode='1p';GS.projectiles=[];GS.enemies=[];GS.boss=null;hitStop=0;cam.x=0;
 GS.arena=null;GS.nodeIndex=0;GS.pickups=[];GS.routeDelay=0;GS.encounterActive=false;
 P1.charIdx=0;P2.charIdx=1;resetPlayer(P1,100);resetPlayer(P2,210);P1.inactive=false;P1.invincible=0;P1.hp=100;P1.lives=3;P2.inactive=true;
 `,env);env.assert=assert;vm.runInContext(`{${body}}`,env);console.log('PASS',name);passed++;}
@@ -25,7 +25,7 @@ test('Startup delays damage; active swing hits once and locks feet/facing',`
  for(let i=0;i<5;i++)updatePlayer(P1,0,{left:true},0,1000);
  assert.equal(e.hp,hp);assert.equal(P1.dir,1);
  updatePlayer(P1,0,{},0,1000);assert.equal(e.hp,hp-12);
- for(let i=0;i<18;i++)updatePlayer(P1,0,{},0,1000);
+ for(let i=0;i<21;i++)updatePlayer(P1,0,{},0,1000);
  assert.equal(e.hp,hp-12);assert.equal(P1.attack,null);
 `);
 test('Kick has a longer committed recovery; only a late press buffers',`
@@ -39,7 +39,7 @@ test('Kick has a longer committed recovery; only a late press buffers',`
 test('Lane and facing checks prevent hits behind or on another depth lane',`
  const e=mkEnemy('heavy',150,GROUND_Y-40),b=mkEnemy('heavy',70,GROUND_Y);GS.enemies=[e,b];
  updatePlayer(P1,0,{punchP:true},0,1000);
- for(let i=0;i<24;i++)updatePlayer(P1,0,{},0,1000);
+ for(let i=0;i<COMBAT.punch.startup+COMBAT.punch.active+COMBAT.punch.recovery;i++)updatePlayer(P1,0,{},0,1000);
  assert.equal(e.hp,e.maxHp);assert.equal(b.hp,b.maxHp);
 `);
 test('Jump keeps lane, has committed horizontal velocity and landing recovery',`
@@ -67,11 +67,11 @@ test('A connected third strike is a knockdown finisher; a whiff resets the chain
  const e=mkEnemy('heavy',150,GROUND_Y);GS.enemies=[e];
  for(let n=0;n<3;n++){
   e.x=150;e.stun=0;updatePlayer(P1,0,{punchP:true},0,1000);
-  for(let i=0;i<24;i++)updatePlayer(P1,0,{},0,1000);
+  for(let i=0;i<COMBAT.punch.startup+COMBAT.punch.active+COMBAT.punch.recovery;i++)updatePlayer(P1,0,{},0,1000);
  }
  assert(e.downT>0);assert.equal(P1.comboN,0);
  P1.comboN=1;P1.comboT=60;GS.enemies=[];
- updatePlayer(P1,0,{punchP:true},0,1000);for(let i=0;i<24;i++)updatePlayer(P1,0,{},0,1000);
+ updatePlayer(P1,0,{punchP:true},0,1000);for(let i=0;i<COMBAT.punch.startup+COMBAT.punch.active+COMBAT.punch.recovery;i++)updatePlayer(P1,0,{},0,1000);
  assert.equal(P1.comboN,0);
 `);
 test('Enemy telegraphs and cannot turn or track a sidestep during its attack',`
@@ -124,16 +124,16 @@ test('Render uses original character draw functions for stagger, fall, rise and 
  startPlayerAttack(P1,'punch');P1.attack.elapsed=6;drawFighter(P1,0);
  assert.equal(seen.at(-1)[4],2*aStep('punch'));CHAR_DEFS[0].drawFn=original;
 `);
-test('Combat stays at 60 ticks while gameplay renders at display refresh',`
+test('Combat stays at 60 ticks while every screen renders at 30 FPS',`
  const oldUpdate=update,oldRender=render;let ticks=0,frames=0;
  update=()=>ticks++;render=()=>frames++;
  for(const hz of [60,120,144]){
   lastTick=null;accumulatedTime=0;ticks=0;frames=0;
   for(let i=0;i<=hz;i++)loop(i*1000/hz);
-  assert(ticks>=59&&ticks<=60);assert.equal(frames,hz+1);
+  assert(ticks>=59&&ticks<=60);assert.equal(frames,31);
   GS.state='title';lastTick=null;accumulatedTime=0;ticks=0;frames=0;
   for(let i=0;i<=hz;i++)loop(i*1000/hz);
-  assert(ticks>=59&&ticks<=60);assert(frames>=59&&frames<=60);GS.state='playing';
+  assert(ticks>=59&&ticks<=60);assert.equal(frames,31);GS.state='playing';
  }
  update=oldUpdate;render=oldRender;
 `);
@@ -157,7 +157,13 @@ test('Map 1 opening renders all script beats and completes or skips to gameplay'
  for(let i=0;i<OPENING_BEATS.length;i++){OPENING.beat=i;OPENING.t=40;drawOpening();}
  assert.equal(OPENING_BEATS.filter(b=>b[0]==='strike').length,7);
  assert.deepEqual(OPENING_BEATS.slice(0,3).map(b=>b[0]),['restrained','captive','arrival']);
- assert(OPENING_TIMES.strike*7<=70);assert.equal(OPENING_STARS.length,7);
+ assert.equal(OPENING_BEATS.length,13);
+ assert.equal(OPENING_BEATS.at(-1)[0],'fallen');
+ assert.equal(OPENING_BEATS[0][1],'Shin, what are you doing? Let Julia go!');
+ assert.equal(OPENING_BEATS[1][1],'Ken… run!');
+ assert(OPENING_BEATS.slice(2,12).every(b=>b[1]===SHIN_OPENING_LINE));
+ assert.equal(OPENING_BEATS.at(-1)[1],'Julia… I’ll come and save you. I promise…');
+ assert.equal(OPENING_TIMES.strike*7,35);assert.equal(OPENING_STARS.length,7);
  for(const key of Object.keys(OPENING_ART_FILES))OPENING_ART[key]={complete:true,naturalWidth:1672,naturalHeight:941};
  for(let i=0;i<OPENING_BEATS.length;i++){OPENING.beat=i;OPENING.t=4;drawOpening();}
  for(const key of Object.keys(OPENING_ART_FILES))delete OPENING_ART[key];
@@ -188,8 +194,8 @@ test('Road stays fixed to fighters throughout the lane and depth speeds remain c
   assert.ok(groundScrollSpeed(y+1)>=groundScrollSpeed(y));
   assert.ok(groundScrollSpeed(y+1)-groundScrollSpeed(y)<.04);
  }
- assert.ok(groundScrollSpeed(474)<1);
- assert.equal(groundScrollSpeed(720),1.25);
+ assert.equal(groundScrollSpeed(474),1);
+ assert.equal(groundScrollSpeed(720),1);
 `);
 test('Expanded depth lane lets fighters move away from and toward the camera',`
  for(let i=0;i<180;i++)updatePlayer(P1,0,{up:true},0,1000);
@@ -221,7 +227,7 @@ test('Ken jumps higher, lands cleanly and preserves the depth lane',`
  const lane=P1.y;updatePlayer(P1,0,{jumpP:true,right:true},0,1000);
  let peak=0,ticks=0;
  while(!P1.onGround&&ticks++<100){updatePlayer(P1,0,{},0,1000);peak=Math.max(peak,P1.z);assert.equal(P1.y,lane);}
- assert(peak>150&&peak<165);assert(ticks>=49&&ticks<=53);
+ assert(peak>150&&peak<165);assert(ticks>=58&&ticks<=60);
  assert.equal(P1.z,0);assert.equal(P1.vz,0);assert.equal(P1.vx,0);assert(P1.landingVisual>0);
 `);
 test('Ken accelerates over four ticks, stops precisely and strides only when moving',`
@@ -371,7 +377,7 @@ test('All fighters punch in the air with a distinct move and one hit per swing',
   assert.equal(P1.attack.kind,'jumppunch');assert.equal(e.hp,hp);
   assert.equal(playerVisual(P1,P1.state,0).state,'punch_low');
   for(let i=0;i<9;i++)updatePlayer(P1,0,{},0,1000);
-  assert.equal(e.hp,hp-COMBAT.jumppunch.damage*2);
+  assert.equal(e.hp,hp-hitZoneDamage(COMBAT.jumppunch.damage,'lower'));
   assert.equal(P1.attack.hits.size,1);
   resetPlayer(P1,100);P1.onGround=false;P1.z=40;
   updatePlayer(P1,0,{kickP:true},0,1000);assert.equal(P1.attack.kind,'jumpkick');
@@ -411,7 +417,7 @@ test('Arcade timeout, initials, ranking cap and checkpoint continue',`
  startArcadeContinue();arcade.board=Array.from({length:20},(_,i)=>({name:'AAA',score:2000-i}));
  P1.score=1;qualifyArcadeScores();assert.equal(GS.state,'highscores');assert.equal(arcade.board.length,20);
  let restored=false;restoreCheckpoint=()=>{restored=true;GS.state='playing';return true;};
- startArcadeContinue();updateArcade();assert(restored);assert.equal(GS.state,'playing');assert.equal(arcade,null);
+ startArcadeContinue();updateArcade();assert(!restored);assert.equal(P1.lives,3);assert.equal(GS.state,'playing');assert.equal(arcade,null);
  arcadeInput=oldInput;restoreCheckpoint=oldRestore;
 `);
 test('All boss profiles use distance-driven poses and rendering interpolates safely',`
@@ -597,5 +603,106 @@ test('Every blocking enemy takes double stun when its guard is bypassed',`
  }
  const normal=mkEnemy('thug',200,GROUND_Y);hitEnemy(P1,normal,1,'#fff');assert.equal(normal.stun,COMBAT.enemyStun);
  const spade=mkBoss('Spade',200);spade.state='idle';hitBoss(P1,spade,1);assert.equal(spade.stun,21);
+`);
+test('Super startup freezes only briefly, advances the card and preserves attack duration',`
+ P1.special=100;updatePlayer(P1,0,{special1P:true},0,1000);
+ assert.equal(P1.special,60);assert.equal(SUPER_FX.freeze,11);
+ const duration=P1.specialT;
+ for(let n=0;n<11;n++)assert(superPresentationTick());
+ assert.equal(SUPER_FX.cards[0].age,11);assert.equal(P1.specialT,duration);
+ assert.equal(superPresentationTick(),false);
+ P2.inactive=false;const x=P2.x;
+ updatePlayer(P2,1,{right:true},0,1000);assert(P2.x>x);
+ while(P1.superWindup>0)updatePlayer(P1,0,{},0,1000);
+ assert.equal(P1.specialT,duration);
+ updatePlayer(P1,0,{},0,1000);assert.equal(P1.specialT,duration-1);
+`);
+test('Only connected final special hits trigger slowdown, and presentation resets cleanly',`
+ P1.specialActive=true;P1.specialTier=1;P1.specialT=1;
+ updatePlayer(P1,0,{},0,1000);assert.equal(SUPER_FX.slow,0);
+ const enemy=mkEnemy('heavy',150,GROUND_Y);GS.enemies=[enemy];
+ P1.specialActive=true;P1.specialT=1;
+ updatePlayer(P1,0,{},0,1000);assert.equal(SUPER_FX.slow,15);assert.equal(hitStop,6);
+ let paused=0;for(let n=0;n<15;n++)if(superPresentationTick())paused++;
+ assert.equal(paused,10);assert.equal(SUPER_FX.slow,0);
+ startSuperFX(P1,2);GS.state='title';superPresentationTick();
+ assert.equal(SUPER_FX.cards.length,0);assert.equal(SUPER_FX.freeze,0);
+`);
+test('Both players can announce specials without replacing each other',`
+ P2.inactive=false;P1.specialActive=true;P2.specialActive=true;
+ startSuperFX(P1,2);startSuperFX(P2,1);
+ assert.equal(SUPER_FX.cards.length,2);assert.equal(SUPER_FX.freeze,11);
+ drawSuperPresentation();
+`);
+test('Only playable fighter punches and kicks gain the requested aura reach',`
+ for(let hero=0;hero<3;hero++)for(const [kind,multiplier] of Object.entries(PLAYER_AURA_REACH)){
+  resetPlayer(P1,100);P1.charIdx=hero;P1.invincible=0;
+  startPlayerAttack(P1,kind);const a=P1.attack,range=COMBAT[kind].range*multiplier;
+  assert.equal(a.range,range);assert.equal(a.baseRange,COMBAT[kind].range);
+  const inside=mkEnemy('heavy',100+range-.01,GROUND_Y),outside=mkEnemy('heavy',100+range+.01,GROUND_Y);
+  GS.enemies=[inside,outside];GS.supplies=[];GS.boss=null;
+  doSwingAtk(P1,a.damage,a.range,'#fff');assert(inside.hp<inside.maxHp);assert.equal(outside.hp,outside.maxHp);
+  a.elapsed=a.startup;drawPlayerAura(P1,0);
+ }
+ assert.equal(COMBAT.punch.range,70);assert.equal(COMBAT.kick.range,84);assert.equal(COMBAT.jumpkick.range,88);
+`);
+test('All three heroes stay airborne about fifteen percent longer without increasing jump height',`
+ function flight(v,g){let z=1,n=0,peak=0;while(z>0&&n<200){z+=v;v-=g;peak=Math.max(peak,z);n++;}return {n,peak};}
+ const old=flight(12,.48);
+ for(let hero=0;hero<3;hero++){
+  resetPlayer(P1,100);P1.charIdx=hero;P1.invincible=0;
+  updatePlayer(P1,0,{jumpP:true},0,1000);let n=0,peak=0;
+  while(!P1.onGround&&n<100){updatePlayer(P1,0,{},0,1000);peak=Math.max(peak,P1.z);n++;}
+  assert(Math.abs(n/old.n-1.15)<.025);assert(Math.abs(peak-old.peak)<3);
+ }
+ assert.equal(COMBAT.gravity,.5);assert.equal(COMBAT.jumpSpeed,9);
+`);
+test('All heroes punch cycles are about twenty percent shorter and jump punches strike lower',`
+ for(let hero=0;hero<3;hero++){
+  P1.charIdx=hero;
+  for(const [punch,kick] of [['punch','kick'],['jumppunch','jumpkick']]){
+   startPlayerAttack(P1,kick);const kickTime=P1.atkTimer;
+   startPlayerAttack(P1,punch);assert(Math.abs(P1.atkTimer/kickTime-.8)<.02);
+  }
+  const e=mkEnemy('heavy',150,GROUND_Y);e.hp=1000;GS.enemies=[e];
+  P1.z=0;assert.equal(jumpPunchContact(P1,e).zone,'lower');
+  P1.z=60;assert.equal(jumpPunchContact(P1,e).zone,'upper');
+  P1.z=250;assert(!jumpPunchContact(P1,e).hits);
+  startPlayerAttack(P1,'jumppunch');assert(!doSwingAtk(P1,22,P1.attack.range,'#fff'));
+  P1.z=30;assert(doSwingAtk(P1,22,P1.attack.range,'#fff'));
+ }
+`);
+test('Buffered punches can restart sooner than kicks for Ken, Rei and Toki',`
+ for(let hero=0;hero<3;hero++){
+  const times={};
+  for(const kind of ['punch','kick']){
+   resetPlayer(P1,100);P1.charIdx=hero;GS.enemies=[];GS.boss=null;GS.supplies=[];
+   updatePlayer(P1,0,{[kind+'P']:true},0,1000);const first=P1.attack;let ticks=0;
+   while(P1.attack===first){
+    updatePlayer(P1,0,P1.atkTimer===3?{[kind+'P']:true}:{},0,1000);ticks++;
+    assert(ticks<50);
+   }
+   updatePlayer(P1,0,{},0,1000);ticks++;
+   assert.equal(P1.attack.kind,kind);times[kind]=ticks;
+  }
+  assert.equal(times.punch,28);assert.equal(times.kick,35);
+  assert.equal(times.punch/times.kick,.8);
+ }
+`);
+test('Lethal knockdown lands, holds its pose, and respawns in place without resetting the fight',`
+ GS.mode='1p';P1.lives=2;P1.x=550;P1.y=GROUND_Y+20;
+ const enemy=mkEnemy('thug',600,P1.y);GS.enemies=[enemy];GS.nodeIndex=3;
+ damagePlayer(P1,999,enemy);assert.equal(P1.hp,0);assert.equal(P1.state,'dying');assert(!P1.inactive);
+ assert.equal(nearestPlayer(600,P1.y),null);
+ while(!P1.onGround)updatePlayer(P1,0,{},0,1000);
+ const x=P1.x,y=P1.y;assert(P1.dying);assert.equal(P1.hp,0);
+ for(let n=0;n<100&&P1.dying;n++)updatePlayer(P1,0,{},0,1000);
+ assert.equal(P1.x,x);assert.equal(P1.y,y);assert.equal(P1.hp,P1.maxHp);assert.equal(P1.state,'getup');
+ assert.equal(P1.lives,1);assert.equal(GS.enemies[0],enemy);assert.equal(GS.nodeIndex,3);
+ P1.invincible=0;P1.riseT=0;damagePlayer(P1,999,enemy);
+ assert.notEqual(GS.state,'gameover');
+ for(let n=0;n<180&&!P1.inactive;n++)updatePlayer(P1,0,{},0,1000);
+ assert.equal(GS.state,'gameover');const deathX=P1.x;
+ assert(continueCurrentRun());assert.equal(P1.x,deathX);assert.equal(GS.enemies[0],enemy);assert.equal(GS.nodeIndex,3);
 `);
 console.log(`${passed} combat checks passed.`);

@@ -17,15 +17,17 @@
     "path": "assets/characters/uighur.png",
     "cellW": 992,
     "cellH": 423,
-    "height": 245,
-    "poses": 6
+    "height": 216.0,
+    "poses": 6,
+    "referenceHeight": 382
   },
   "devil-rebirth": {
     "path": "assets/characters/devil-rebirth.png",
     "cellW": 668,
     "cellH": 507,
-    "height": 340,
-    "poses": 6
+    "height": 259.2,
+    "poses": 6,
+    "referenceHeight": 487
   },
   "souther": {
     "path": "assets/characters/souther.png",
@@ -45,8 +47,9 @@
     "path": "assets/characters/raoh.png",
     "cellW": 648,
     "cellH": 492,
-    "height": 250,
-    "poses": 6
+    "height": 158.4,
+    "poses": 6,
+    "referenceHeight": 459
   },
   "amiba": {
     "path": "assets/characters/amiba.png",
@@ -87,8 +90,9 @@
     "path": "assets/characters/fang-chief.png",
     "cellW": 1004,
     "cellH": 497,
-    "height": 215,
-    "poses": 6
+    "height": 172.8,
+    "poses": 6,
+    "referenceHeight": 476
   },
   "jackal": {
     "path": "assets/characters/jackal.png",
@@ -311,14 +315,16 @@
     "path": "assets/characters/spade.png",
     "cellW": 868,
     "cellH": 512,
-    "height": 182,
-    "poses": 6
+    "height": 165.6,
+    "poses": 6,
+    "referenceHeight": 504
   },
   "heart": {
     "path": "assets/characters/heart.png",
     "cellW": 667,
     "cellH": 521,
-    "height": 215,
-    "poses": 6
+    "height": 187.2,
+    "poses": 6,
+    "referenceHeight": 498
   }
 }

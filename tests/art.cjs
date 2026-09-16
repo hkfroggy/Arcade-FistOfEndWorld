@@ -8,6 +8,7 @@ const env={console,Math,Uint8Array,Set,assert,draws,performance:{now:()=>0},wind
   document:{getElementById:()=>canvas,createElement:()=>canvas},navigator:{},Image:class {complete=true;naturalWidth=1536;},requestAnimationFrame:noop,setTimeout:noop,
   localStorage:{getItem:()=>null,setItem:noop,removeItem:noop}};
 vm.createContext(env);
+vm.runInContext(fs.readFileSync(path.join(root,'assets/characters/knockdown-v1/manifest.js'),'utf8'),env);
 vm.runInContext(fs.readFileSync(require('node:path').join(__dirname,'../arcade.js'),'utf8'),env);
 for(const file of ['i18n.js','i18n-story.js'])vm.runInContext(fs.readFileSync(require('node:path').join(__dirname,'../'+file),'utf8'),env);
 vm.runInContext(fs.readFileSync(require('node:path').join(__dirname,'../opening.js'),'utf8'),env);
@@ -139,8 +140,66 @@ console.log('PASS Gunner, Jagi and Knife use eight weapon poses and preserve dam
 vm.runInContext(`
  for(const [key,bounds] of Object.entries(NPC_DOWN_BOUNDS)){
   const s=CHARACTER_IMAGES[key];assert(s);const e={type:key,fallen:true,fr:30,dir:-1,onGround:true,groundDownT:180};
-  draws.length=0;assert(drawEnemyFall(e));const d=draws[0];assert.equal(d[0],s.img);assert.equal(d[3],bounds[2]);assert.equal(d[4],bounds[3]);
+  KNOCKDOWN_IMAGES[key].img.complete=false;draws.length=0;assert(drawEnemyFall(e));KNOCKDOWN_IMAGES[key].img.complete=true;const d=draws[0];assert.equal(d[0],s.img);assert.equal(d[3],bounds[2]);assert.equal(d[4],bounds[3]);
   assert(d.slice(1).every(Number.isFinite));
  }
 `,env);
 console.log('PASS Every enemy injury silhouette supports the grounded fall renderer');
+
+vm.runInContext(`
+ assert.equal(Object.keys(KNOCKDOWN_IMAGES).length,31);
+ for(const key of Object.keys(NPC_DOWN_BOUNDS)){
+  const s=KNOCKDOWN_IMAGES[key];assert(s,key);
+  const e={type:key,fallen:true,dir:1};
+  for(const [air,fr,remaining,pose] of [[true,0,0,0],[true,30,0,1],[false,30,180,2],[false,90,100,3],[false,210,1,3]]){
+   Object.assign(e,{onGround:!air,fr,groundDownT:remaining});draws.length=0;
+   assert(drawEnemyFall(e));assert.equal(draws[0][0],s.img);assert.equal(draws[0][1],pose*s.cellW);
+   assert(draws[0].slice(1).every(Number.isFinite));
+  }
+ }
+ for(let i=0;i<3;i++){
+  P1.charIdx=i;const hero=PLAYER_ART_KEYS[i];
+  for(const state of ['stunned','knockdown','getup'])SPR[hero+'_'+state]={scale:1,poses:Array.from({length:state==='getup'?3:2},(_,pose)=>({width:120,height:176,anchorX:60,state,pose}))};
+  for(const [state,onGround,fr,riseT,expected,pose] of [
+   ['knockdown',false,0,0,'stunned',0],['knockdown',false,40,0,'knockdown',0],
+   ['knockdown',true,40,0,'knockdown',1],['dying',true,100,0,'knockdown',1],
+   ['getup',true,0,COMBAT.rise,'getup',0],['getup',true,0,COMBAT.rise/2,'getup',1],['getup',true,0,1,'getup',2]]){
+   Object.assign(P1,{state,onGround,fr,riseT});draws.length=0;assert(drawPlayerFall(P1));
+   assert.equal(draws[0][0].state,expected);assert.equal(draws[0][0].pose,pose);
+  }
+ }
+`,env);
+console.log('PASS All 34 fighters select recoil, fall, grounded and recovery poses correctly');
+
+vm.runInContext(`
+ for(const [key,ratio] of Object.entries({'heart':1.3,'devil-rebirth':1.8,'uighur':1.5,'spade':1.15,'raoh':1.1,'fang-chief':1.2})){
+  const s=CHARACTER_IMAGES[key];assert(Math.abs(s.height-144*ratio)<.001,key);
+  const boss={type:key,state:'idle',dir:1,fr:0,y:GROUND_Y};
+  draws.length=0;assert(tryDrawCharacterArt(boss));
+  assert(Math.abs(draws[0][8]/s.cellH*s.referenceHeight-144*ratio)<.001,key+' standing height');
+  P1.y=GROUND_Y;assert(Math.abs(fighterHitHeight(boss)/fighterHitHeight(P1)-ratio)<.001,key+' hit-zone height');
+  const down=KNOCKDOWN_IMAGES[key];boss.fallen=true;boss.onGround=true;boss.groundDownT=100;
+  draws.length=0;assert(drawEnemyFall(boss));
+  assert(Math.abs(draws[0][8]/down.cellH*down.referenceHeight-144*ratio)<.001,key+' knockdown scale');
+ }
+`,env);
+console.log('PASS Six boss standing, hit-zone and knockdown sizes match the requested Ken ratios');
+
+vm.runInContext(`
+ roadSurface={width:2172,height:724};
+ let previous;
+ for(const camera of [0,.5,50,809.5,810,1500]){
+  draws.length=0;drawStableGround(camera,null);
+  assert(draws.length>0&&draws.length<10);
+  for(let i=0;i<draws.length;i++){
+   const d=draws[i];assert.equal(d[0],roadSurface);
+   assert.equal(d[2],0);assert.equal(d[4],724);
+   assert.equal(d[6],450);assert.equal(d[7]/d[8],3);
+   if(i)assert(Math.abs(draws[i-1][5]+draws[i-1][7]-d[5])<.001);
+  }
+  if(camera===.5)assert.equal(draws[0][5],previous-.5);
+  previous=draws[0][5];
+ }
+ roadSurface=null;
+`,env);
+console.log('PASS Ground scrolls as full undistorted tiles with seamless placement and fractional camera movement');

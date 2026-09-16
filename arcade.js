@@ -28,7 +28,7 @@ function updateArcade(){
   const input=arcadeInput();
   if(GS.state==='gameover'){
     if(input.confirm||input.back){
-      if(!restoreCheckpoint()){
+      if(!continueCurrentRun()&&!restoreCheckpoint()){
         PLAYERS.forEach((p,i)=>{p.inactive=i===1&&GS.mode==='1p';p.lives=3;p.hp=p.maxHp;});startLevel(GS.lvlIdx);
       }
       arcade=null;return;
@@ -59,7 +59,7 @@ function drawArcadeOverlay(){
   if(GS.state==='gameover'){
     ctx.fillText('CONTINUE?',W/2,205);ctx.font='bold 130px Courier New';ctx.fillText(Math.ceil(arcade.ticks/60),W/2,365);
     ctx.font='18px Courier New';ctx.fillStyle='#fff';ctx.fillText('PUNCH / KICK / START',W/2,445);
-    ctx.font='14px Courier New';ctx.fillText('Continue from your checkpoint',W/2,480);
+    ctx.font='14px Courier New';ctx.fillText('Continue right where you fell',W/2,480);
   }else if(GS.state==='nameentry'){
     ctx.fillText('TOP 20 SCORE',W/2,195);ctx.font='20px Courier New';ctx.fillStyle='#fff';
     const p=arcade.queue[0];ctx.fillText(`PLAYER ${p.player}   ${p.score}`,W/2,245);

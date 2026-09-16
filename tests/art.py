@@ -35,3 +35,16 @@ for key, s in toki.items():
         assert box and box[0]>0 and box[2]<w, (key, 'clipped or empty pose')
         assert np.mean(np.array(alpha)<8)>.3, (key, 'background remains')
 print('PASS All Rei and Toki action sequences contain complete transparent silhouettes')
+
+knockdowns = json.loads((root/'assets/characters/knockdown-v1/manifest.json').read_text())
+assert len(knockdowns) == 31
+for name, s in knockdowns.items():
+    im = Image.open(root/s['path'])
+    assert im.mode == 'RGBA' and im.size == (s['cellW']*4, s['cellH']), name
+    for i in range(4):
+        a = im.crop((i*s['cellW'],0,(i+1)*s['cellW'],s['cellH'])).getchannel('A')
+        box = a.getbbox()
+        assert box and box[0] > 0 and box[2] < s['cellW'], (name,i,'cropped pose')
+        assert box[3] == s['cellH']-8, (name,i,'ground alignment')
+        assert np.mean(np.array(a)<8) > .2, (name,i,'background')
+print('PASS 124 knockdown poses: transparent, separate, and aligned to the ground')

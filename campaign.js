@@ -191,7 +191,7 @@ function loadCampaignSave() {
     GS.checkpoint=cp;return restoreCheckpoint();
   } catch(_){return false;}
 }
-function activeParty(){return PLAYERS.filter(p=>!p.inactive);}
+function activeParty(){return PLAYERS.filter(p=>!p.inactive&&!p.dying);}
 function applyStory(flags){Object.assign(GS.story,flags||{});}
 function completeEncounter() {
   const node=LEVELS[GS.lvlIdx].route[GS.nodeIndex];
@@ -199,8 +199,10 @@ function completeEncounter() {
   if(node.rescue)GS.pickups.push({id:`${GS.lvlIdx}:${GS.nodeIndex}`,x:node.x+100,y:GROUND_Y-48,label:node.rescue});
   GS.nodeIndex++;GS.encounterActive=false;GS.arena=null;GS.bossActive=false;GS.boss=null;GS.state='playing';
   GS.routeDelay=50;cam.maxX=LEVEL_W-gameplayViewWidth();
+  if(LEVELS[GS.lvlIdx].route[GS.nodeIndex])captureCheckpoint(GS.nodeIndex,P1.x);
 }
 function beginEncounter(node) {
+  captureCheckpoint(GS.nodeIndex,P1.x);
   GS.encounterActive=true;
   if(node.kind==='rest') {
     activeParty().forEach(p=>{p.hp=node.fullHeal?p.maxHp:Math.min(p.maxHp,p.hp+25);p.special=Math.max(p.special,40);});
@@ -232,6 +234,7 @@ const SUPPLY_DROP_CHANCE=.2;
 function breakSupply(item){
   if(item.broken)return;
   item.broken=true;item.revealT=28;
+  combatSfx(item.container==='crate'?'wood':item.container==='urn'||item.container==='glass'?'glass':'metal');
   item.hasDrop=Math.random()<SUPPLY_DROP_CHANCE;
 }
 function updateCampaignRoute() {

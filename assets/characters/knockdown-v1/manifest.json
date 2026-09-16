@@ -1,0 +1,219 @@
+{
+  "thug": {
+    "path": "assets/characters/knockdown-v1/thug.png",
+    "cellW": 379,
+    "cellH": 279,
+    "referenceHeight": 292.222,
+    "poses": 4
+  },
+  "scavenger": {
+    "path": "assets/characters/knockdown-v1/scavenger.png",
+    "cellW": 388,
+    "cellH": 272,
+    "referenceHeight": 284.444,
+    "poses": 4
+  },
+  "gang": {
+    "path": "assets/characters/knockdown-v1/gang.png",
+    "cellW": 390,
+    "cellH": 255,
+    "referenceHeight": 265.556,
+    "poses": 4
+  },
+  "heavy": {
+    "path": "assets/characters/knockdown-v1/heavy.png",
+    "cellW": 388,
+    "cellH": 263,
+    "referenceHeight": 274.444,
+    "poses": 4
+  },
+  "spear": {
+    "path": "assets/characters/knockdown-v1/spear.png",
+    "cellW": 409,
+    "cellH": 318,
+    "referenceHeight": 335.556,
+    "poses": 4
+  },
+  "knife": {
+    "path": "assets/characters/knockdown-v1/knife.png",
+    "cellW": 389,
+    "cellH": 267,
+    "referenceHeight": 278.889,
+    "poses": 4
+  },
+  "shield": {
+    "path": "assets/characters/knockdown-v1/shield.png",
+    "cellW": 376,
+    "cellH": 318,
+    "referenceHeight": 335.556,
+    "poses": 4
+  },
+  "nanto": {
+    "path": "assets/characters/knockdown-v1/nanto.png",
+    "cellW": 410,
+    "cellH": 252,
+    "referenceHeight": 262.222,
+    "poses": 4
+  },
+  "spade": {
+    "path": "assets/characters/knockdown-v1/spade.png",
+    "cellW": 371,
+    "cellH": 257,
+    "referenceHeight": 266.667,
+    "poses": 4
+  },
+  "heart": {
+    "path": "assets/characters/knockdown-v1/heart.png",
+    "cellW": 379,
+    "cellH": 267,
+    "referenceHeight": 278.889,
+    "poses": 4
+  },
+  "shin": {
+    "path": "assets/characters/knockdown-v1/shin.png",
+    "cellW": 423,
+    "cellH": 257,
+    "referenceHeight": 267.778,
+    "poses": 4
+  },
+  "jagi": {
+    "path": "assets/characters/knockdown-v1/jagi.png",
+    "cellW": 380,
+    "cellH": 262,
+    "referenceHeight": 242.222,
+    "poses": 4
+  },
+  "uighur": {
+    "path": "assets/characters/knockdown-v1/uighur.png",
+    "cellW": 352,
+    "cellH": 247,
+    "referenceHeight": 256.667,
+    "poses": 4
+  },
+  "devil-rebirth": {
+    "path": "assets/characters/knockdown-v1/devil-rebirth.png",
+    "cellW": 357,
+    "cellH": 272,
+    "referenceHeight": 284.444,
+    "poses": 4
+  },
+  "souther": {
+    "path": "assets/characters/knockdown-v1/souther.png",
+    "cellW": 373,
+    "cellH": 247,
+    "referenceHeight": 256.667,
+    "poses": 4
+  },
+  "ryuga": {
+    "path": "assets/characters/knockdown-v1/ryuga.png",
+    "cellW": 369,
+    "cellH": 274,
+    "referenceHeight": 286.667,
+    "poses": 4
+  },
+  "gunner": {
+    "path": "assets/characters/knockdown-v1/gunner.png",
+    "cellW": 378,
+    "cellH": 275,
+    "referenceHeight": 287.778,
+    "poses": 4
+  },
+  "whip": {
+    "path": "assets/characters/knockdown-v1/whip.png",
+    "cellW": 392,
+    "cellH": 264,
+    "referenceHeight": 272.222,
+    "poses": 4
+  },
+  "bomber": {
+    "path": "assets/characters/knockdown-v1/bomber.png",
+    "cellW": 368,
+    "cellH": 262,
+    "referenceHeight": 273.333,
+    "poses": 4
+  },
+  "elite": {
+    "path": "assets/characters/knockdown-v1/elite.png",
+    "cellW": 366,
+    "cellH": 268,
+    "referenceHeight": 280.0,
+    "poses": 4
+  },
+  "yuda": {
+    "path": "assets/characters/knockdown-v1/yuda.png",
+    "cellW": 391,
+    "cellH": 319,
+    "referenceHeight": 336.667,
+    "poses": 4
+  },
+  "command-captain": {
+    "path": "assets/characters/knockdown-v1/command-captain.png",
+    "cellW": 386,
+    "cellH": 372,
+    "referenceHeight": 395.556,
+    "poses": 4
+  },
+  "captain": {
+    "path": "assets/characters/knockdown-v1/captain.png",
+    "cellW": 390,
+    "cellH": 314,
+    "referenceHeight": 331.111,
+    "poses": 4
+  },
+  "raoh": {
+    "path": "assets/characters/knockdown-v1/raoh.png",
+    "cellW": 369,
+    "cellH": 264,
+    "referenceHeight": 275.556,
+    "poses": 4
+  },
+  "amiba": {
+    "path": "assets/characters/knockdown-v1/amiba.png",
+    "cellW": 377,
+    "cellH": 276,
+    "referenceHeight": 288.889,
+    "poses": 4
+  },
+  "club-enforcer": {
+    "path": "assets/characters/knockdown-v1/club-enforcer.png",
+    "cellW": 367,
+    "cellH": 262,
+    "referenceHeight": 273.333,
+    "poses": 4
+  },
+  "shield-captain": {
+    "path": "assets/characters/knockdown-v1/shield-captain.png",
+    "cellW": 350,
+    "cellH": 284,
+    "referenceHeight": 297.778,
+    "poses": 4
+  },
+  "diamond": {
+    "path": "assets/characters/knockdown-v1/diamond.png",
+    "cellW": 395,
+    "cellH": 246,
+    "referenceHeight": 255.556,
+    "poses": 4
+  },
+  "club": {
+    "path": "assets/characters/knockdown-v1/club.png",
+    "cellW": 387,
+    "cellH": 264,
+    "referenceHeight": 275.556,
+    "poses": 4
+  },
+  "fang-chief": {
+    "path": "assets/characters/knockdown-v1/fang-chief.png",
+    "cellW": 448,
+    "cellH": 255,
+    "referenceHeight": 265.556,
+    "poses": 4
+  },
+  "jackal": {
+    "path": "assets/characters/knockdown-v1/jackal.png",
+    "cellW": 391,
+    "cellH": 243,
+    "referenceHeight": 252.222,
+    "poses": 4
+  }
+}

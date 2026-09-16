@@ -17,5 +17,5 @@ const BACKGROUND_MUSIC=(()=>{
  document.addEventListener('visibilitychange',()=>{
   if(document.hidden)player.pause();else if(started)start();
  });
- return {start};
+ return {start,duck(active){player.volume=active?.2:.5;}};
 })();

@@ -134,3 +134,10 @@ Grief becomes resolve.|悲しみが、決意に変わる。|悲痛，化作不�
 One man walks into the wasteland.|一人の男が荒野へ歩き出す。|一個男人，獨自走入荒漠。
 Kenshiro’s journey begins.|ケンシロウの旅が始まる。|健次郎的旅程，正式開始。
 `);
+
+GAME_I18N.add(`
+Shin, what are you doing? Let Julia go!|シン、何をする！ユリアを放せ！|阿星，你在做甚麼？放開尤加利！
+Ken… run!|ケン…逃げて！|健…快逃！
+You’re weak. You can’t protect her.|お前は弱い。彼女を守ることはできない。|你太弱了。你保護不了她。
+Julia… I’ll come and save you. I promise…|ユリア…必ず助けに行く。約束する…|尤加利…我一定會來救你。我答應你…
+`);
