@@ -43,8 +43,23 @@ test('Encounter gates stop future waves and boss remains in the reachable arena'
  P1.x=420;updateCampaignRoute();assert.equal(GS.enemies.length,4);const first=GS.nodeIndex;
  P1.x=1800;updateCampaignRoute();assert.equal(GS.nodeIndex,first);assert.equal(GS.enemies.length,4);
  GS.enemies=[];completeEncounter();GS.nodeIndex=LEVELS[0].route.length-1;GS.routeDelay=0;P1.x=LEVELS[0].bossX;
- updateCampaignRoute();assert(GS.boss.x<GS.arena.right-35);assert(GS.boss.x>GS.arena.left+100);
+ updateCampaignRoute();assert(GS.boss.x>cam.x+gameplayViewWidth()+150);assert.equal(GS.boss.entrySide,1);
  const before=P1.x;updatePlayer(P1,0,{right:true},cam.x,GS.arena.right);assert(P1.x<=GS.arena.right-30);
+`);
+test('Every encounter enters offscreen from both sides without teleporting at arena clamps',`
+ for(let chapter=0;chapter<9;chapter++){
+  startLevel(chapter);
+  for(const n of LEVELS[chapter].route.filter(n=>n.kind==='fight')){
+   GS.enemies=[];cam.x=Math.max(0,n.x-300);beginEncounter(n);
+   assert(GS.enemies.some(e=>e.entrySide===-1));assert(GS.enemies.some(e=>e.entrySide===1));
+   for(const e of GS.enemies){
+    assert(e.x<cam.x-150||e.x>cam.x+gameplayViewWidth()+150);
+    let ticks=0;
+    while(e.entrySide&&ticks++<2000){const x=e.x;updateEnemy(e);separateFighters();assert(Math.abs(e.x-x)<10);assert(!e.attack);}
+    assert(!e.entrySide);assert(e.x>=GS.arena.left&&e.x<=GS.arena.right);
+   }
+  }
+ }
 `);
 test('Rescue is optional, rewards once and is not required for essential story flags',`
  GS.nodeIndex=LEVELS[0].route.findIndex(n=>n.rescue);const rescueIndex=GS.nodeIndex;GS.encounterActive=true;completeEncounter();assert.equal(GS.nodeIndex,rescueIndex+1);assert.equal(GS.pickups.length,1);
@@ -65,7 +80,7 @@ test('Saved checkpoint survives reload and malformed saves are rejected',`
 `);
 test('Raoh is a three-phase solo duel; no ordinary reinforcements',`
  startLevel(8);GS.nodeIndex=LEVELS[8].route.length-1;P1.x=LEVELS[8].bossX;updateCampaignRoute();assert.equal(GS.boss.name,'Raoh');assert.equal(GS.enemies.length,0);
- const b=GS.boss;b.state='approach';b.introT=0;b.hp=b.maxHp*.6;updateBoss(b);assert.equal(b.phase,2);
+ const b=GS.boss;while(b.entrySide)updateBoss(b);b.state='approach';b.introT=0;b.hp=b.maxHp*.6;updateBoss(b);assert.equal(b.phase,2);
  b.hp=b.maxHp*.25;b.attack=null;updateBoss(b);assert.equal(b.phase,3);
  for(let i=0;i<20;i++)updateCampaignRoute();assert.equal(GS.enemies.length,0);
 `);
@@ -91,7 +106,7 @@ test('Expanded routes spawn complete larger groups with safe arena placement',`
    assert(GS.enemies.some(e=>e.x<n.x));assert(GS.enemies.some(e=>e.x>n.x));
    assert(GS.enemies.some(e=>e.flankEnabled));
    assert(n.roles.length>=(chapter===0&&n.originalIndex===0?4:6));
-   for(const e of GS.enemies){assert(e.x>GS.arena.left&&e.x<GS.arena.right);assert(e.y>=LANE_BACK&&e.y<=LANE_FRONT);}
+   for(const e of GS.enemies){assert(e.x<Math.min(cam.x,GS.arena.left)||e.x>Math.max(cam.x+gameplayViewWidth(),GS.arena.right));assert(e.y>=LANE_BACK&&e.y<=LANE_FRONT);}
   }
  }
  assert(LEVELS[8].route.at(-2).fullHeal);

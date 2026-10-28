@@ -1,0 +1,691 @@
+{
+  "sourceWorkflow": "audio_stable_audio.json",
+  "jobs": [
+    {
+      "name": "swish",
+      "prompt_id": "6a04c9fd-ba79-4ad6-9a51-e413733c624a",
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 2026102800,
+            "steps": 50,
+            "cfg": 4.98,
+            "sampler_name": "dpmpp_3m_sde_gpu",
+            "scheduler": "exponential",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "stable-audio-open-1.0.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "A single fast martial arts arm swing through the air, sharp dry whoosh, close microphone, isolated game sound effect, no music, no voice, quiet background.",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "music, speech, talking, singing, melody, background ambience",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "10": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "t5-base.safetensors",
+            "type": "stable_audio",
+            "device": "default"
+          }
+        },
+        "11": {
+          "class_type": "EmptyLatentAudio",
+          "inputs": {
+            "seconds": 2,
+            "batch_size": 1
+          }
+        },
+        "12": {
+          "class_type": "VAEDecodeAudio",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "20": {
+          "class_type": "SaveAudioAdvanced",
+          "inputs": {
+            "filename_prefix": "audio/ken-swish",
+            "format": "flac",
+            "audio": [
+              "12",
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "punch",
+      "prompt_id": "e7b79c82-1c81-40dd-a2a5-aa857463f932",
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 2026102801,
+            "steps": 50,
+            "cfg": 4.98,
+            "sampler_name": "dpmpp_3m_sde_gpu",
+            "scheduler": "exponential",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "stable-audio-open-1.0.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "One single powerful fist punch impact on a leather punching bag, sharp smack with deep body thump, dry close recorded martial arts foley, no music, no voice.",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "music, speech, talking, singing, melody, background ambience",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "10": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "t5-base.safetensors",
+            "type": "stable_audio",
+            "device": "default"
+          }
+        },
+        "11": {
+          "class_type": "EmptyLatentAudio",
+          "inputs": {
+            "seconds": 2,
+            "batch_size": 1
+          }
+        },
+        "12": {
+          "class_type": "VAEDecodeAudio",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "20": {
+          "class_type": "SaveAudioAdvanced",
+          "inputs": {
+            "filename_prefix": "audio/ken-punch",
+            "format": "flac",
+            "audio": [
+              "12",
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "kick",
+      "prompt_id": "97013da4-c388-4f10-9ace-6689ee48b0c8",
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 2026102802,
+            "steps": 50,
+            "cfg": 4.98,
+            "sampler_name": "dpmpp_3m_sde_gpu",
+            "scheduler": "exponential",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "stable-audio-open-1.0.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "One single heavy martial arts kick impact on a padded leather target, deep powerful thud and short air rush, dry close game sound effect, no music, no voice.",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "music, speech, talking, singing, melody, background ambience",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "10": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "t5-base.safetensors",
+            "type": "stable_audio",
+            "device": "default"
+          }
+        },
+        "11": {
+          "class_type": "EmptyLatentAudio",
+          "inputs": {
+            "seconds": 2,
+            "batch_size": 1
+          }
+        },
+        "12": {
+          "class_type": "VAEDecodeAudio",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "20": {
+          "class_type": "SaveAudioAdvanced",
+          "inputs": {
+            "filename_prefix": "audio/ken-kick",
+            "format": "flac",
+            "audio": [
+              "12",
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "jump",
+      "prompt_id": "49eaafa6-c237-45d4-a614-ee5f54f418f0",
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 2026102803,
+            "steps": 50,
+            "cfg": 4.98,
+            "sampler_name": "dpmpp_3m_sde_gpu",
+            "scheduler": "exponential",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "stable-audio-open-1.0.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "One single forceful downward karate palm strike impact, explosive sharp crack and deep thump, short dry cinematic fighting game sound, no voice or music.",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "music, speech, talking, singing, melody, background ambience",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "10": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "t5-base.safetensors",
+            "type": "stable_audio",
+            "device": "default"
+          }
+        },
+        "11": {
+          "class_type": "EmptyLatentAudio",
+          "inputs": {
+            "seconds": 2,
+            "batch_size": 1
+          }
+        },
+        "12": {
+          "class_type": "VAEDecodeAudio",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "20": {
+          "class_type": "SaveAudioAdvanced",
+          "inputs": {
+            "filename_prefix": "audio/ken-jump",
+            "format": "flac",
+            "audio": [
+              "12",
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "down",
+      "prompt_id": "7fa92ee0-d5b9-44b2-80cc-f61ff8cfe85d",
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 2026102804,
+            "steps": 50,
+            "cfg": 4.98,
+            "sampler_name": "dpmpp_3m_sde_gpu",
+            "scheduler": "exponential",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "stable-audio-open-1.0.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "One single heavy body falling onto dusty gravel, low thud followed by brief grit scattering, dry isolated game foley, no voices no music.",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "music, speech, talking, singing, melody, background ambience",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "10": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "t5-base.safetensors",
+            "type": "stable_audio",
+            "device": "default"
+          }
+        },
+        "11": {
+          "class_type": "EmptyLatentAudio",
+          "inputs": {
+            "seconds": 2,
+            "batch_size": 1
+          }
+        },
+        "12": {
+          "class_type": "VAEDecodeAudio",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "20": {
+          "class_type": "SaveAudioAdvanced",
+          "inputs": {
+            "filename_prefix": "audio/ken-down",
+            "format": "flac",
+            "audio": [
+              "12",
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "charge",
+      "prompt_id": "f7a92912-118a-4cf5-825c-525a3af6dec3",
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 2026102805,
+            "steps": 50,
+            "cfg": 4.98,
+            "sampler_name": "dpmpp_3m_sde_gpu",
+            "scheduler": "exponential",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "stable-audio-open-1.0.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "Short rising supernatural martial arts energy charge, deep rumble rising to a tense bright airy shimmer, isolated game sound effect, no voices no music.",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "music, speech, talking, singing, melody, background ambience",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "10": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "t5-base.safetensors",
+            "type": "stable_audio",
+            "device": "default"
+          }
+        },
+        "11": {
+          "class_type": "EmptyLatentAudio",
+          "inputs": {
+            "seconds": 3,
+            "batch_size": 1
+          }
+        },
+        "12": {
+          "class_type": "VAEDecodeAudio",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "20": {
+          "class_type": "SaveAudioAdvanced",
+          "inputs": {
+            "filename_prefix": "audio/ken-charge",
+            "format": "flac",
+            "audio": [
+              "12",
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "release",
+      "prompt_id": "a5c568bc-e2b8-435d-a6e0-c2e287ffe30b",
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 2026102806,
+            "steps": 50,
+            "cfg": 4.98,
+            "sampler_name": "dpmpp_3m_sde_gpu",
+            "scheduler": "exponential",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "stable-audio-open-1.0.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "One explosive martial arts energy blast release, powerful punchy bass impact with fast rushing air decay, isolated short cinematic game sound, no voices no music.",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "music, speech, talking, singing, melody, background ambience",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "10": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "t5-base.safetensors",
+            "type": "stable_audio",
+            "device": "default"
+          }
+        },
+        "11": {
+          "class_type": "EmptyLatentAudio",
+          "inputs": {
+            "seconds": 2,
+            "batch_size": 1
+          }
+        },
+        "12": {
+          "class_type": "VAEDecodeAudio",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "20": {
+          "class_type": "SaveAudioAdvanced",
+          "inputs": {
+            "filename_prefix": "audio/ken-release",
+            "format": "flac",
+            "audio": [
+              "12",
+              0
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

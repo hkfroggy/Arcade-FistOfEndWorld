@@ -15,3 +15,10 @@ for(const kind of ['punch-swish','kick-swish','jump-swish','punch','kick','jump'
 }
 assert.equal(a.state,'running');assert(params.every(values=>values.every(Number.isFinite)));
 console.log('PASS All 13 SFX schedule valid layers, resume audio, limit duplicate bursts and release their nodes');
+let musicPlayer;
+const musicEnv={Audio:class {constructor(){musicPlayer=this;}addEventListener(){}},window:{addEventListener(){}},document:{addEventListener(){}}};
+vm.createContext(musicEnv);vm.runInContext(fs.readFileSync(require('node:path').join(__dirname,'../music.js'),'utf8'),musicEnv);
+assert.equal(musicPlayer.volume,.25);
+vm.runInContext('BACKGROUND_MUSIC.duck(true)',musicEnv);assert.equal(musicPlayer.volume,.1);
+vm.runInContext('BACKGROUND_MUSIC.duck(false)',musicEnv);assert.equal(musicPlayer.volume,.25);
+console.log('PASS Music and special-move ducking remain at half their previous volumes');

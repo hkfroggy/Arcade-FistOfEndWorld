@@ -1,0 +1,74 @@
+{
+  "toki-palm": {
+    "source": "complete-toki-palm_00001.flac",
+    "trimStart": 0.0,
+    "duration": 0.22,
+    "peak": 0.75
+  },
+  "toki-swish": {
+    "source": "complete-toki-swish_00001.flac",
+    "trimStart": 0.1098,
+    "duration": 0.18,
+    "peak": 0.75
+  },
+  "toki-kick": {
+    "source": "complete-toki-kick_00001.flac",
+    "trimStart": 0.0,
+    "duration": 0.3,
+    "peak": 0.75
+  },
+  "toki-charge": {
+    "source": "complete-toki-charge_00001.flac",
+    "trimStart": 0.1646,
+    "duration": 0.4,
+    "peak": 0.75
+  },
+  "reload": {
+    "source": "complete-reload_00001.flac",
+    "trimStart": 0.01,
+    "duration": 0.5,
+    "peak": 0.75
+  },
+  "getup": {
+    "source": "complete-getup_00001.flac",
+    "trimStart": 0.1147,
+    "duration": 0.3,
+    "peak": 0.75
+  },
+  "pickup": {
+    "source": "complete-pickup_00001.flac",
+    "trimStart": 0.01,
+    "duration": 0.25,
+    "peak": 0.75
+  },
+  "recover": {
+    "source": "complete-recover_00001.flac",
+    "trimStart": 0.0,
+    "duration": 0.5,
+    "peak": 0.75
+  },
+  "heavy-hit": {
+    "source": "complete-heavy-hit_00001.flac",
+    "trimStart": 0.0,
+    "duration": 0.45,
+    "peak": 0.75
+  },
+  "cursor": {
+    "source": "complete-cursor_00001.flac",
+    "trimStart": 0.0,
+    "duration": 0.08,
+    "peak": 0.75
+  },
+  "confirm": {
+    "source": "complete-confirm_00001.flac",
+    "trimStart": 0.005,
+    "duration": 0.2,
+    "peak": 0.75
+  },
+  "join": {
+    "source": "complete-join_00001.flac",
+    "trimStart": 0.0399,
+    "duration": 0.45,
+    "peak": 0.75
+  }
+}

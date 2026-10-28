@@ -1,7 +1,7 @@
 // One player carries the playlist across menus, levels and retries.
 const BACKGROUND_MUSIC=(()=>{
  const tracks=['assets/music/ashes-under-steel.mp3','assets/music/ashes-under-steel-2.mp3'];
- const player=new Audio();player.volume=.5;player.preload='metadata';
+ const player=new Audio();player.volume=.25;player.preload='metadata';
  let index=0,pending=false,started=false;
  player.src=tracks[index];
  function start(){
@@ -17,5 +17,5 @@ const BACKGROUND_MUSIC=(()=>{
  document.addEventListener('visibilitychange',()=>{
   if(document.hidden)player.pause();else if(started)start();
  });
- return {start,duck(active){player.volume=active?.2:.5;}};
+ return {start,duck(active){player.volume=active?.1:.25;}};
 })();

@@ -1,0 +1,1671 @@
+{
+  "workflow": "audio_stable_audio.json",
+  "jobs": [
+    {
+      "name": "block",
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 2026102900,
+            "steps": 50,
+            "cfg": 4.98,
+            "sampler_name": "dpmpp_3m_sde_gpu",
+            "scheduler": "exponential",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "stable-audio-open-1.0.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "Single metal shield being struck by a sword, sharp metallic clang and brief ring. Isolated dry video game sound effect, silence around the sound, no music, no speech, no melody.",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "music, singing, speech, melody, background ambience",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "10": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "t5-base.safetensors",
+            "type": "stable_audio",
+            "device": "default"
+          }
+        },
+        "11": {
+          "class_type": "EmptyLatentAudio",
+          "inputs": {
+            "seconds": 2,
+            "batch_size": 1
+          }
+        },
+        "12": {
+          "class_type": "VAEDecodeAudio",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "20": {
+          "class_type": "SaveAudioAdvanced",
+          "inputs": {
+            "filename_prefix": "audio/action-block",
+            "format": "flac",
+            "audio": [
+              "12",
+              0
+            ]
+          }
+        }
+      },
+      "prompt_id": "17f0c02c-1f98-4c22-8b6a-bdc5aedcf546"
+    },
+    {
+      "name": "wood",
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 2026102901,
+            "steps": 50,
+            "cfg": 4.98,
+            "sampler_name": "dpmpp_3m_sde_gpu",
+            "scheduler": "exponential",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "stable-audio-open-1.0.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "Single wooden crate smashed, dry wood crack and splinters scattering. Isolated dry video game sound effect, silence around the sound, no music, no speech, no melody.",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "music, singing, speech, melody, background ambience",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "10": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "t5-base.safetensors",
+            "type": "stable_audio",
+            "device": "default"
+          }
+        },
+        "11": {
+          "class_type": "EmptyLatentAudio",
+          "inputs": {
+            "seconds": 2,
+            "batch_size": 1
+          }
+        },
+        "12": {
+          "class_type": "VAEDecodeAudio",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "20": {
+          "class_type": "SaveAudioAdvanced",
+          "inputs": {
+            "filename_prefix": "audio/action-wood",
+            "format": "flac",
+            "audio": [
+              "12",
+              0
+            ]
+          }
+        }
+      },
+      "prompt_id": "cf2d4193-e326-4b89-9e9a-766476bcccae"
+    },
+    {
+      "name": "metal",
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 2026102902,
+            "steps": 50,
+            "cfg": 4.98,
+            "sampler_name": "dpmpp_3m_sde_gpu",
+            "scheduler": "exponential",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "stable-audio-open-1.0.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "Single rusty metal barrel crushed, low metallic crunch with short rattle. Isolated dry video game sound effect, silence around the sound, no music, no speech, no melody.",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "music, singing, speech, melody, background ambience",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "10": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "t5-base.safetensors",
+            "type": "stable_audio",
+            "device": "default"
+          }
+        },
+        "11": {
+          "class_type": "EmptyLatentAudio",
+          "inputs": {
+            "seconds": 2,
+            "batch_size": 1
+          }
+        },
+        "12": {
+          "class_type": "VAEDecodeAudio",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "20": {
+          "class_type": "SaveAudioAdvanced",
+          "inputs": {
+            "filename_prefix": "audio/action-metal",
+            "format": "flac",
+            "audio": [
+              "12",
+              0
+            ]
+          }
+        }
+      },
+      "prompt_id": "e654f0fc-d550-4a11-8e8f-3149b751865a"
+    },
+    {
+      "name": "glass",
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 2026102903,
+            "steps": 50,
+            "cfg": 4.98,
+            "sampler_name": "dpmpp_3m_sde_gpu",
+            "scheduler": "exponential",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "stable-audio-open-1.0.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "Single ceramic pot shattering, sharp brittle crack and small pieces falling. Isolated dry video game sound effect, silence around the sound, no music, no speech, no melody.",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "music, singing, speech, melody, background ambience",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "10": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "t5-base.safetensors",
+            "type": "stable_audio",
+            "device": "default"
+          }
+        },
+        "11": {
+          "class_type": "EmptyLatentAudio",
+          "inputs": {
+            "seconds": 2,
+            "batch_size": 1
+          }
+        },
+        "12": {
+          "class_type": "VAEDecodeAudio",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "20": {
+          "class_type": "SaveAudioAdvanced",
+          "inputs": {
+            "filename_prefix": "audio/action-glass",
+            "format": "flac",
+            "audio": [
+              "12",
+              0
+            ]
+          }
+        }
+      },
+      "prompt_id": "c94a48a2-cfb0-494e-a9c7-5eef7218e820"
+    },
+    {
+      "name": "shotgun",
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 2026102904,
+            "steps": 50,
+            "cfg": 4.98,
+            "sampler_name": "dpmpp_3m_sde_gpu",
+            "scheduler": "exponential",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "stable-audio-open-1.0.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "Single shotgun blast, powerful dry gunshot with short mechanical clack. Isolated dry video game sound effect, silence around the sound, no music, no speech, no melody.",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "music, singing, speech, melody, background ambience",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "10": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "t5-base.safetensors",
+            "type": "stable_audio",
+            "device": "default"
+          }
+        },
+        "11": {
+          "class_type": "EmptyLatentAudio",
+          "inputs": {
+            "seconds": 2,
+            "batch_size": 1
+          }
+        },
+        "12": {
+          "class_type": "VAEDecodeAudio",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "20": {
+          "class_type": "SaveAudioAdvanced",
+          "inputs": {
+            "filename_prefix": "audio/action-shotgun",
+            "format": "flac",
+            "audio": [
+              "12",
+              0
+            ]
+          }
+        }
+      },
+      "prompt_id": "47ff3e09-4c80-4ac3-89bf-2e1c9d13aa7e"
+    },
+    {
+      "name": "knife",
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 2026102905,
+            "steps": 50,
+            "cfg": 4.98,
+            "sampler_name": "dpmpp_3m_sde_gpu",
+            "scheduler": "exponential",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "stable-audio-open-1.0.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "Three quick throwing knives slicing through air, sharp metallic whipping swishes. Isolated dry video game sound effect, silence around the sound, no music, no speech, no melody.",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "music, singing, speech, melody, background ambience",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "10": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "t5-base.safetensors",
+            "type": "stable_audio",
+            "device": "default"
+          }
+        },
+        "11": {
+          "class_type": "EmptyLatentAudio",
+          "inputs": {
+            "seconds": 2,
+            "batch_size": 1
+          }
+        },
+        "12": {
+          "class_type": "VAEDecodeAudio",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "20": {
+          "class_type": "SaveAudioAdvanced",
+          "inputs": {
+            "filename_prefix": "audio/action-knife",
+            "format": "flac",
+            "audio": [
+              "12",
+              0
+            ]
+          }
+        }
+      },
+      "prompt_id": "a753e632-b28f-48e4-a797-d6d436643d06"
+    },
+    {
+      "name": "whip",
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 2026102906,
+            "steps": 50,
+            "cfg": 4.98,
+            "sampler_name": "dpmpp_3m_sde_gpu",
+            "scheduler": "exponential",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "stable-audio-open-1.0.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "Single leather whip snapping sharply through air. Isolated dry video game sound effect, silence around the sound, no music, no speech, no melody.",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "music, singing, speech, melody, background ambience",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "10": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "t5-base.safetensors",
+            "type": "stable_audio",
+            "device": "default"
+          }
+        },
+        "11": {
+          "class_type": "EmptyLatentAudio",
+          "inputs": {
+            "seconds": 2,
+            "batch_size": 1
+          }
+        },
+        "12": {
+          "class_type": "VAEDecodeAudio",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "20": {
+          "class_type": "SaveAudioAdvanced",
+          "inputs": {
+            "filename_prefix": "audio/action-whip",
+            "format": "flac",
+            "audio": [
+              "12",
+              0
+            ]
+          }
+        }
+      },
+      "prompt_id": "c181ca8d-30be-4150-8320-d2423495b7b7"
+    },
+    {
+      "name": "spear",
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 2026102907,
+            "steps": 50,
+            "cfg": 4.98,
+            "sampler_name": "dpmpp_3m_sde_gpu",
+            "scheduler": "exponential",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "stable-audio-open-1.0.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "Single long spear thrust, fast wooden shaft swish and metallic blade hiss. Isolated dry video game sound effect, silence around the sound, no music, no speech, no melody.",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "music, singing, speech, melody, background ambience",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "10": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "t5-base.safetensors",
+            "type": "stable_audio",
+            "device": "default"
+          }
+        },
+        "11": {
+          "class_type": "EmptyLatentAudio",
+          "inputs": {
+            "seconds": 2,
+            "batch_size": 1
+          }
+        },
+        "12": {
+          "class_type": "VAEDecodeAudio",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "20": {
+          "class_type": "SaveAudioAdvanced",
+          "inputs": {
+            "filename_prefix": "audio/action-spear",
+            "format": "flac",
+            "audio": [
+              "12",
+              0
+            ]
+          }
+        }
+      },
+      "prompt_id": "122fead4-756f-451d-9088-d06b73d20cfb"
+    },
+    {
+      "name": "step",
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 2026102908,
+            "steps": 50,
+            "cfg": 4.98,
+            "sampler_name": "dpmpp_3m_sde_gpu",
+            "scheduler": "exponential",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "stable-audio-open-1.0.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "Single heavy leather boot footstep on dusty gravel, quiet grit crunch. Isolated dry video game sound effect, silence around the sound, no music, no speech, no melody.",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "music, singing, speech, melody, background ambience",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "10": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "t5-base.safetensors",
+            "type": "stable_audio",
+            "device": "default"
+          }
+        },
+        "11": {
+          "class_type": "EmptyLatentAudio",
+          "inputs": {
+            "seconds": 2,
+            "batch_size": 1
+          }
+        },
+        "12": {
+          "class_type": "VAEDecodeAudio",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "20": {
+          "class_type": "SaveAudioAdvanced",
+          "inputs": {
+            "filename_prefix": "audio/action-step",
+            "format": "flac",
+            "audio": [
+              "12",
+              0
+            ]
+          }
+        }
+      },
+      "prompt_id": "f5dcac10-df49-4e3d-ace3-b1f0ca85d3b9"
+    },
+    {
+      "name": "takeoff",
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 2026102909,
+            "steps": 50,
+            "cfg": 4.98,
+            "sampler_name": "dpmpp_3m_sde_gpu",
+            "scheduler": "exponential",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "stable-audio-open-1.0.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "Single martial artist jumping, boot pushing off gravel with short clothing rustle. Isolated dry video game sound effect, silence around the sound, no music, no speech, no melody.",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "music, singing, speech, melody, background ambience",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "10": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "t5-base.safetensors",
+            "type": "stable_audio",
+            "device": "default"
+          }
+        },
+        "11": {
+          "class_type": "EmptyLatentAudio",
+          "inputs": {
+            "seconds": 2,
+            "batch_size": 1
+          }
+        },
+        "12": {
+          "class_type": "VAEDecodeAudio",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "20": {
+          "class_type": "SaveAudioAdvanced",
+          "inputs": {
+            "filename_prefix": "audio/action-takeoff",
+            "format": "flac",
+            "audio": [
+              "12",
+              0
+            ]
+          }
+        }
+      },
+      "prompt_id": "b35a3d8f-3ab6-478b-88f0-bbe449b92624"
+    },
+    {
+      "name": "landing",
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 2026102910,
+            "steps": 50,
+            "cfg": 4.98,
+            "sampler_name": "dpmpp_3m_sde_gpu",
+            "scheduler": "exponential",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "stable-audio-open-1.0.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "Single martial artist landing on both feet on gravel, compact dull thud. Isolated dry video game sound effect, silence around the sound, no music, no speech, no melody.",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "music, singing, speech, melody, background ambience",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "10": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "t5-base.safetensors",
+            "type": "stable_audio",
+            "device": "default"
+          }
+        },
+        "11": {
+          "class_type": "EmptyLatentAudio",
+          "inputs": {
+            "seconds": 2,
+            "batch_size": 1
+          }
+        },
+        "12": {
+          "class_type": "VAEDecodeAudio",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "20": {
+          "class_type": "SaveAudioAdvanced",
+          "inputs": {
+            "filename_prefix": "audio/action-landing",
+            "format": "flac",
+            "audio": [
+              "12",
+              0
+            ]
+          }
+        }
+      },
+      "prompt_id": "18716c8e-a7e0-42f8-8abd-c636392f1b3f"
+    },
+    {
+      "name": "dash",
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 2026102911,
+            "steps": 50,
+            "cfg": 4.98,
+            "sampler_name": "dpmpp_3m_sde_gpu",
+            "scheduler": "exponential",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "stable-audio-open-1.0.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "Short extremely fast fighter dash, rushing air gust, sharp start and quick decay. Isolated dry video game sound effect, silence around the sound, no music, no speech, no melody.",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "music, singing, speech, melody, background ambience",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "10": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "t5-base.safetensors",
+            "type": "stable_audio",
+            "device": "default"
+          }
+        },
+        "11": {
+          "class_type": "EmptyLatentAudio",
+          "inputs": {
+            "seconds": 2,
+            "batch_size": 1
+          }
+        },
+        "12": {
+          "class_type": "VAEDecodeAudio",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "20": {
+          "class_type": "SaveAudioAdvanced",
+          "inputs": {
+            "filename_prefix": "audio/action-dash",
+            "format": "flac",
+            "audio": [
+              "12",
+              0
+            ]
+          }
+        }
+      },
+      "prompt_id": "60f93844-5bf6-4706-ac18-2a48aed6e896"
+    },
+    {
+      "name": "spin",
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 2026102912,
+            "steps": 50,
+            "cfg": 4.98,
+            "sampler_name": "dpmpp_3m_sde_gpu",
+            "scheduler": "exponential",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "stable-audio-open-1.0.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "Short spinning martial arts kick, circular rushing air swooshes. Isolated dry video game sound effect, silence around the sound, no music, no speech, no melody.",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "music, singing, speech, melody, background ambience",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "10": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "t5-base.safetensors",
+            "type": "stable_audio",
+            "device": "default"
+          }
+        },
+        "11": {
+          "class_type": "EmptyLatentAudio",
+          "inputs": {
+            "seconds": 2,
+            "batch_size": 1
+          }
+        },
+        "12": {
+          "class_type": "VAEDecodeAudio",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "20": {
+          "class_type": "SaveAudioAdvanced",
+          "inputs": {
+            "filename_prefix": "audio/action-spin",
+            "format": "flac",
+            "audio": [
+              "12",
+              0
+            ]
+          }
+        }
+      },
+      "prompt_id": "62805207-194d-43ad-97ff-82c0c7e3dfc3"
+    },
+    {
+      "name": "rei",
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 2026102913,
+            "steps": 50,
+            "cfg": 4.98,
+            "sampler_name": "dpmpp_3m_sde_gpu",
+            "scheduler": "exponential",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "stable-audio-open-1.0.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "Short icy slicing energy wave, bright sharp crystalline air slash. Isolated dry video game sound effect, silence around the sound, no music, no speech, no melody.",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "music, singing, speech, melody, background ambience",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "10": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "t5-base.safetensors",
+            "type": "stable_audio",
+            "device": "default"
+          }
+        },
+        "11": {
+          "class_type": "EmptyLatentAudio",
+          "inputs": {
+            "seconds": 2,
+            "batch_size": 1
+          }
+        },
+        "12": {
+          "class_type": "VAEDecodeAudio",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "20": {
+          "class_type": "SaveAudioAdvanced",
+          "inputs": {
+            "filename_prefix": "audio/action-rei",
+            "format": "flac",
+            "audio": [
+              "12",
+              0
+            ]
+          }
+        }
+      },
+      "prompt_id": "2ebac21a-7a2d-4a89-a333-22c189e32e9b"
+    },
+    {
+      "name": "toki",
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 2026102914,
+            "steps": 50,
+            "cfg": 4.98,
+            "sampler_name": "dpmpp_3m_sde_gpu",
+            "scheduler": "exponential",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "stable-audio-open-1.0.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "Short resonant gentle energy palm burst, low soft chime with punchy airy pulse. Isolated dry video game sound effect, silence around the sound, no music, no speech, no melody.",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "music, singing, speech, melody, background ambience",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "10": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "t5-base.safetensors",
+            "type": "stable_audio",
+            "device": "default"
+          }
+        },
+        "11": {
+          "class_type": "EmptyLatentAudio",
+          "inputs": {
+            "seconds": 2,
+            "batch_size": 1
+          }
+        },
+        "12": {
+          "class_type": "VAEDecodeAudio",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "20": {
+          "class_type": "SaveAudioAdvanced",
+          "inputs": {
+            "filename_prefix": "audio/action-toki",
+            "format": "flac",
+            "audio": [
+              "12",
+              0
+            ]
+          }
+        }
+      },
+      "prompt_id": "8aa3693a-cfcb-4d8b-a739-e82610a20ae6"
+    },
+    {
+      "name": "death",
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 2026102915,
+            "steps": 50,
+            "cfg": 4.98,
+            "sampler_name": "dpmpp_3m_sde_gpu",
+            "scheduler": "exponential",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "stable-audio-open-1.0.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "Single defeated fighter collapsing, low strained nonverbal exhale and heavy clothing rustle. Isolated dry video game sound effect, silence around the sound, no music, no speech, no melody.",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "music, singing, speech, melody, background ambience",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "10": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "t5-base.safetensors",
+            "type": "stable_audio",
+            "device": "default"
+          }
+        },
+        "11": {
+          "class_type": "EmptyLatentAudio",
+          "inputs": {
+            "seconds": 2,
+            "batch_size": 1
+          }
+        },
+        "12": {
+          "class_type": "VAEDecodeAudio",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "20": {
+          "class_type": "SaveAudioAdvanced",
+          "inputs": {
+            "filename_prefix": "audio/action-death",
+            "format": "flac",
+            "audio": [
+              "12",
+              0
+            ]
+          }
+        }
+      },
+      "prompt_id": "b9ed7384-8361-4c9b-810e-970325612385"
+    },
+    {
+      "name": "explosion",
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 2026102916,
+            "steps": 50,
+            "cfg": 4.98,
+            "sampler_name": "dpmpp_3m_sde_gpu",
+            "scheduler": "exponential",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "stable-audio-open-1.0.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "Single compact explosive blast, deep punchy boom and short debris rattle. Isolated dry video game sound effect, silence around the sound, no music, no speech, no melody.",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "music, singing, speech, melody, background ambience",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "10": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "t5-base.safetensors",
+            "type": "stable_audio",
+            "device": "default"
+          }
+        },
+        "11": {
+          "class_type": "EmptyLatentAudio",
+          "inputs": {
+            "seconds": 2,
+            "batch_size": 1
+          }
+        },
+        "12": {
+          "class_type": "VAEDecodeAudio",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "20": {
+          "class_type": "SaveAudioAdvanced",
+          "inputs": {
+            "filename_prefix": "audio/action-explosion",
+            "format": "flac",
+            "audio": [
+              "12",
+              0
+            ]
+          }
+        }
+      },
+      "prompt_id": "98735d06-caf9-4e4c-b529-ed8164a99e66"
+    }
+  ]
+}

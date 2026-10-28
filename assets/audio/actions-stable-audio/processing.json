@@ -1,0 +1,104 @@
+{
+  "block": {
+    "source": "action-block_00001.flac",
+    "trimStart": 0.0,
+    "duration": 0.4,
+    "peak": 0.75
+  },
+  "wood": {
+    "source": "action-wood_00001.flac",
+    "trimStart": 0.0249,
+    "duration": 0.5,
+    "peak": 0.75
+  },
+  "metal": {
+    "source": "action-metal_00001.flac",
+    "trimStart": 0.02,
+    "duration": 0.6,
+    "peak": 0.75
+  },
+  "glass": {
+    "source": "action-glass_00001.flac",
+    "trimStart": 0.015,
+    "duration": 0.6,
+    "peak": 0.75
+  },
+  "shotgun": {
+    "source": "action-shotgun_00001.flac",
+    "trimStart": 0.0399,
+    "duration": 0.45,
+    "peak": 0.75
+  },
+  "knife": {
+    "source": "action-knife_00001.flac",
+    "trimStart": 0.015,
+    "duration": 0.35,
+    "peak": 0.75
+  },
+  "whip": {
+    "source": "action-whip_00001.flac",
+    "trimStart": 0.0,
+    "duration": 0.25,
+    "peak": 0.75
+  },
+  "spear": {
+    "source": "action-spear_00001.flac",
+    "trimStart": 0.02,
+    "duration": 0.28,
+    "peak": 0.75
+  },
+  "step": {
+    "source": "action-step_00001.flac",
+    "trimStart": 0.0,
+    "duration": 0.18,
+    "peak": 0.75
+  },
+  "takeoff": {
+    "source": "action-takeoff_00001.flac",
+    "trimStart": 0.0649,
+    "duration": 0.25,
+    "peak": 0.75
+  },
+  "landing": {
+    "source": "action-landing_00001.flac",
+    "trimStart": 1.9905,
+    "duration": 0.0529,
+    "peak": 0.75
+  },
+  "dash": {
+    "source": "action-dash_00001.flac",
+    "trimStart": 0.0,
+    "duration": 0.4,
+    "peak": 0.75
+  },
+  "spin": {
+    "source": "action-spin_00001.flac",
+    "trimStart": 0.015,
+    "duration": 0.65,
+    "peak": 0.75
+  },
+  "rei": {
+    "source": "action-rei_00001.flac",
+    "trimStart": 0.0,
+    "duration": 0.65,
+    "peak": 0.75
+  },
+  "toki": {
+    "source": "action-toki_00001.flac",
+    "trimStart": 0.0249,
+    "duration": 0.65,
+    "peak": 0.75
+  },
+  "death": {
+    "source": "action-death_00001.flac",
+    "trimStart": 0.0349,
+    "duration": 0.65,
+    "peak": 0.75
+  },
+  "explosion": {
+    "source": "action-explosion_00001.flac",
+    "trimStart": 0.0,
+    "duration": 0.7,
+    "peak": 0.75
+  }
+}

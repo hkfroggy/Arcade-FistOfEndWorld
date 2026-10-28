@@ -1,0 +1,44 @@
+{
+  "swish": {
+    "source": "ken-swish_00001.flac",
+    "trimStart": 0.0798,
+    "duration": 0.22,
+    "peak": 0.75
+  },
+  "punch": {
+    "source": "ken-punch_00001.flac",
+    "trimStart": 0.1048,
+    "duration": 0.25,
+    "peak": 0.75
+  },
+  "kick": {
+    "source": "ken-kick_00001.flac",
+    "trimStart": 0.1247,
+    "duration": 0.38,
+    "peak": 0.75
+  },
+  "jump": {
+    "source": "ken-jump_00001.flac",
+    "trimStart": 0.1197,
+    "duration": 0.42,
+    "peak": 0.75
+  },
+  "down": {
+    "source": "ken-down_00001.flac",
+    "trimStart": 0.0249,
+    "duration": 0.55,
+    "peak": 0.75
+  },
+  "charge": {
+    "source": "ken-charge_00001.flac",
+    "trimStart": 0.0,
+    "duration": 0.5743,
+    "peak": 0.75
+  },
+  "release": {
+    "source": "ken-release_00001.flac",
+    "trimStart": 0.01,
+    "duration": 0.65,
+    "peak": 0.75
+  }
+}

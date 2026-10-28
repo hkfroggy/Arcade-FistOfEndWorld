@@ -1,0 +1,985 @@
+{
+  "workflow": "audio_stable_audio.json",
+  "jobs": [
+    {
+      "name": "hand",
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 2026103000,
+            "steps": 50,
+            "cfg": 4.98,
+            "sampler_name": "dpmpp_3m_sde_gpu",
+            "scheduler": "exponential",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "stable-audio-open-1.0.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "One quick bare open hand slicing through air with a soft cotton sleeve snap, close dry martial arts foley. Isolated studio recorded sound effect, quiet background. No speech, music, ringing, electronic tones, laser sounds or metallic sword clangs.",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "music, voice, singing, synthesizer, melody, laser, reverb",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "10": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "t5-base.safetensors",
+            "type": "stable_audio",
+            "device": "default"
+          }
+        },
+        "11": {
+          "class_type": "EmptyLatentAudio",
+          "inputs": {
+            "seconds": 2,
+            "batch_size": 1
+          }
+        },
+        "12": {
+          "class_type": "VAEDecodeAudio",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "20": {
+          "class_type": "SaveAudioAdvanced",
+          "inputs": {
+            "filename_prefix": "audio/rei-hand",
+            "format": "flac",
+            "audio": [
+              "12",
+              0
+            ]
+          }
+        }
+      },
+      "prompt_id": "7874ff42-2dc0-4169-90f1-26dfbd1f1551"
+    },
+    {
+      "name": "palm",
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 2026103001,
+            "steps": 50,
+            "cfg": 4.98,
+            "sampler_name": "dpmpp_3m_sde_gpu",
+            "scheduler": "exponential",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "stable-audio-open-1.0.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "One sharp open palm striking a leather training pad, fleshy slap and compact low body thump, realistic close foley. Isolated studio recorded sound effect, quiet background. No speech, music, ringing, electronic tones, laser sounds or metallic sword clangs.",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "music, voice, singing, synthesizer, melody, laser, reverb",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "10": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "t5-base.safetensors",
+            "type": "stable_audio",
+            "device": "default"
+          }
+        },
+        "11": {
+          "class_type": "EmptyLatentAudio",
+          "inputs": {
+            "seconds": 2,
+            "batch_size": 1
+          }
+        },
+        "12": {
+          "class_type": "VAEDecodeAudio",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "20": {
+          "class_type": "SaveAudioAdvanced",
+          "inputs": {
+            "filename_prefix": "audio/rei-palm",
+            "format": "flac",
+            "audio": [
+              "12",
+              0
+            ]
+          }
+        }
+      },
+      "prompt_id": "9d63ac0c-d1d9-4323-b3c2-d04cbd70aec8"
+    },
+    {
+      "name": "kick",
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 2026103002,
+            "steps": 50,
+            "cfg": 4.98,
+            "sampler_name": "dpmpp_3m_sde_gpu",
+            "scheduler": "exponential",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "stable-audio-open-1.0.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "One fast boot kick into a heavy padded target, short air rush and weighty leather thud, realistic martial arts foley. Isolated studio recorded sound effect, quiet background. No speech, music, ringing, electronic tones, laser sounds or metallic sword clangs.",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "music, voice, singing, synthesizer, melody, laser, reverb",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "10": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "t5-base.safetensors",
+            "type": "stable_audio",
+            "device": "default"
+          }
+        },
+        "11": {
+          "class_type": "EmptyLatentAudio",
+          "inputs": {
+            "seconds": 2,
+            "batch_size": 1
+          }
+        },
+        "12": {
+          "class_type": "VAEDecodeAudio",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "20": {
+          "class_type": "SaveAudioAdvanced",
+          "inputs": {
+            "filename_prefix": "audio/rei-kick",
+            "format": "flac",
+            "audio": [
+              "12",
+              0
+            ]
+          }
+        }
+      },
+      "prompt_id": "bf6ce4e0-b131-4560-87a5-12ba75ff801d"
+    },
+    {
+      "name": "chop",
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 2026103003,
+            "steps": 50,
+            "cfg": 4.98,
+            "sampler_name": "dpmpp_3m_sde_gpu",
+            "scheduler": "exponential",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "stable-audio-open-1.0.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "One powerful downward double palm chop hitting a padded target, two very closely spaced crisp slaps with a solid body thump. Isolated studio recorded sound effect, quiet background. No speech, music, ringing, electronic tones, laser sounds or metallic sword clangs.",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "music, voice, singing, synthesizer, melody, laser, reverb",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "10": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "t5-base.safetensors",
+            "type": "stable_audio",
+            "device": "default"
+          }
+        },
+        "11": {
+          "class_type": "EmptyLatentAudio",
+          "inputs": {
+            "seconds": 2,
+            "batch_size": 1
+          }
+        },
+        "12": {
+          "class_type": "VAEDecodeAudio",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "20": {
+          "class_type": "SaveAudioAdvanced",
+          "inputs": {
+            "filename_prefix": "audio/rei-chop",
+            "format": "flac",
+            "audio": [
+              "12",
+              0
+            ]
+          }
+        }
+      },
+      "prompt_id": "09bfefef-ec05-4dee-9357-7d8c1f9a7414"
+    },
+    {
+      "name": "net",
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 2026103004,
+            "steps": 50,
+            "cfg": 4.98,
+            "sampler_name": "dpmpp_3m_sde_gpu",
+            "scheduler": "exponential",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "stable-audio-open-1.0.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "Brief rapid alternating hand sweeps through air, overlapping thin cutting air swishes forming a flurry, natural cloth rustle, physical airy vacuum rush. Isolated studio recorded sound effect, quiet background. No speech, music, ringing, electronic tones, laser sounds or metallic sword clangs.",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "music, voice, singing, synthesizer, melody, laser, reverb",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "10": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "t5-base.safetensors",
+            "type": "stable_audio",
+            "device": "default"
+          }
+        },
+        "11": {
+          "class_type": "EmptyLatentAudio",
+          "inputs": {
+            "seconds": 2,
+            "batch_size": 1
+          }
+        },
+        "12": {
+          "class_type": "VAEDecodeAudio",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "20": {
+          "class_type": "SaveAudioAdvanced",
+          "inputs": {
+            "filename_prefix": "audio/rei-net",
+            "format": "flac",
+            "audio": [
+              "12",
+              0
+            ]
+          }
+        }
+      },
+      "prompt_id": "06b043db-3df0-4b93-84d6-ebd0d521d1e9"
+    },
+    {
+      "name": "rise",
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 2026103005,
+            "steps": 50,
+            "cfg": 4.98,
+            "sampler_name": "dpmpp_3m_sde_gpu",
+            "scheduler": "exponential",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "stable-audio-open-1.0.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "A light powerful leap with cotton clothes fluttering and a soft broad winglike rush of air, rising quickly then fading. Isolated studio recorded sound effect, quiet background. No speech, music, ringing, electronic tones, laser sounds or metallic sword clangs.",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "music, voice, singing, synthesizer, melody, laser, reverb",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "10": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "t5-base.safetensors",
+            "type": "stable_audio",
+            "device": "default"
+          }
+        },
+        "11": {
+          "class_type": "EmptyLatentAudio",
+          "inputs": {
+            "seconds": 2,
+            "batch_size": 1
+          }
+        },
+        "12": {
+          "class_type": "VAEDecodeAudio",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "20": {
+          "class_type": "SaveAudioAdvanced",
+          "inputs": {
+            "filename_prefix": "audio/rei-rise",
+            "format": "flac",
+            "audio": [
+              "12",
+              0
+            ]
+          }
+        }
+      },
+      "prompt_id": "756aa223-256d-421a-b27c-afe7ac6a6ed0"
+    },
+    {
+      "name": "dive",
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 2026103006,
+            "steps": 50,
+            "cfg": 4.98,
+            "sampler_name": "dpmpp_3m_sde_gpu",
+            "scheduler": "exponential",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "stable-audio-open-1.0.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "One very fast downward rush of air, tightening sharp whistling swoosh, sudden stop, realistic fast motion foley. Isolated studio recorded sound effect, quiet background. No speech, music, ringing, electronic tones, laser sounds or metallic sword clangs.",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "music, voice, singing, synthesizer, melody, laser, reverb",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "10": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "t5-base.safetensors",
+            "type": "stable_audio",
+            "device": "default"
+          }
+        },
+        "11": {
+          "class_type": "EmptyLatentAudio",
+          "inputs": {
+            "seconds": 2,
+            "batch_size": 1
+          }
+        },
+        "12": {
+          "class_type": "VAEDecodeAudio",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "20": {
+          "class_type": "SaveAudioAdvanced",
+          "inputs": {
+            "filename_prefix": "audio/rei-dive",
+            "format": "flac",
+            "audio": [
+              "12",
+              0
+            ]
+          }
+        }
+      },
+      "prompt_id": "90042840-1109-4df2-8b77-11f0adb0e5c8"
+    },
+    {
+      "name": "land",
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 2026103007,
+            "steps": 50,
+            "cfg": 4.98,
+            "sampler_name": "dpmpp_3m_sde_gpu",
+            "scheduler": "exponential",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "stable-audio-open-1.0.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "Single forceful two foot landing on gravel with a sharp double palm pad impact, compact heavy thud and tiny scattering grit. Isolated studio recorded sound effect, quiet background. No speech, music, ringing, electronic tones, laser sounds or metallic sword clangs.",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "music, voice, singing, synthesizer, melody, laser, reverb",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "10": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "t5-base.safetensors",
+            "type": "stable_audio",
+            "device": "default"
+          }
+        },
+        "11": {
+          "class_type": "EmptyLatentAudio",
+          "inputs": {
+            "seconds": 2,
+            "batch_size": 1
+          }
+        },
+        "12": {
+          "class_type": "VAEDecodeAudio",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "20": {
+          "class_type": "SaveAudioAdvanced",
+          "inputs": {
+            "filename_prefix": "audio/rei-land",
+            "format": "flac",
+            "audio": [
+              "12",
+              0
+            ]
+          }
+        }
+      },
+      "prompt_id": "5a236ce6-b93b-4fb9-ab97-63e36823c1c3"
+    },
+    {
+      "name": "charge",
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 2026103008,
+            "steps": 50,
+            "cfg": 4.98,
+            "sampler_name": "dpmpp_3m_sde_gpu",
+            "scheduler": "exponential",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "stable-audio-open-1.0.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "Short intake of air and tense rising rushing wind around a martial artist, subtle cloth rustle, natural low air pressure build. Isolated studio recorded sound effect, quiet background. No speech, music, ringing, electronic tones, laser sounds or metallic sword clangs.",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "music, voice, singing, synthesizer, melody, laser, reverb",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "10": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "t5-base.safetensors",
+            "type": "stable_audio",
+            "device": "default"
+          }
+        },
+        "11": {
+          "class_type": "EmptyLatentAudio",
+          "inputs": {
+            "seconds": 2,
+            "batch_size": 1
+          }
+        },
+        "12": {
+          "class_type": "VAEDecodeAudio",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "20": {
+          "class_type": "SaveAudioAdvanced",
+          "inputs": {
+            "filename_prefix": "audio/rei-charge",
+            "format": "flac",
+            "audio": [
+              "12",
+              0
+            ]
+          }
+        }
+      },
+      "prompt_id": "bf873f77-3caa-4ecc-b562-b8eb4fe10e1e"
+    },
+    {
+      "name": "release",
+      "workflow": {
+        "3": {
+          "class_type": "KSampler",
+          "inputs": {
+            "seed": 2026103009,
+            "steps": 50,
+            "cfg": 4.98,
+            "sampler_name": "dpmpp_3m_sde_gpu",
+            "scheduler": "exponential",
+            "denoise": 1,
+            "model": [
+              "4",
+              0
+            ],
+            "positive": [
+              "6",
+              0
+            ],
+            "negative": [
+              "7",
+              0
+            ],
+            "latent_image": [
+              "11",
+              0
+            ]
+          }
+        },
+        "4": {
+          "class_type": "CheckpointLoaderSimple",
+          "inputs": {
+            "ckpt_name": "stable-audio-open-1.0.safetensors"
+          }
+        },
+        "6": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "Short rapid flurry of open palm strikes and crisp cutting air sweeps, organic leather target slaps, forceful final thump. Isolated studio recorded sound effect, quiet background. No speech, music, ringing, electronic tones, laser sounds or metallic sword clangs.",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "7": {
+          "class_type": "CLIPTextEncode",
+          "inputs": {
+            "text": "music, voice, singing, synthesizer, melody, laser, reverb",
+            "clip": [
+              "10",
+              0
+            ]
+          }
+        },
+        "10": {
+          "class_type": "CLIPLoader",
+          "inputs": {
+            "clip_name": "t5-base.safetensors",
+            "type": "stable_audio",
+            "device": "default"
+          }
+        },
+        "11": {
+          "class_type": "EmptyLatentAudio",
+          "inputs": {
+            "seconds": 2,
+            "batch_size": 1
+          }
+        },
+        "12": {
+          "class_type": "VAEDecodeAudio",
+          "inputs": {
+            "samples": [
+              "3",
+              0
+            ],
+            "vae": [
+              "4",
+              2
+            ]
+          }
+        },
+        "20": {
+          "class_type": "SaveAudioAdvanced",
+          "inputs": {
+            "filename_prefix": "audio/rei-release",
+            "format": "flac",
+            "audio": [
+              "12",
+              0
+            ]
+          }
+        }
+      },
+      "prompt_id": "720bd73d-7c9a-4aac-a8c4-014bc71dc2b3"
+    }
+  ]
+}

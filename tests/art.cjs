@@ -203,3 +203,10 @@ vm.runInContext(`
  roadSurface=null;
 `,env);
 console.log('PASS Ground scrolls as full undistorted tiles with seamless placement and fractional camera movement');
+
+const gallery=JSON.parse(fs.readFileSync(path.join(root,'assets/sprites/player-animations.js'),'utf8').match(/window.PLAYER_ANIMATIONS\s*=\s*(\{.*?\});/s)[1]);
+for(const hero of ['ken','rei']){
+ const s=inline.sprites[hero+'_walk'];assert.equal(s.regions.length,8);
+ assert.deepEqual(gallery[hero+'_walk'],s);assert(s.sheet.includes('walk-v3'));
+}
+console.log('PASS Ken and Rei gameplay and preview use the same eight-phase rebuilt walk cycles');

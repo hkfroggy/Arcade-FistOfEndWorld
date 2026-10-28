@@ -215,15 +215,16 @@ function beginEncounter(node) {
       activeParty().forEach(p=>{p.hp=Math.max(p.hp,80);p.special=Math.max(p.special,40);});
       captureCheckpoint(GS.nodeIndex,node.x-80);
     }
-    GS.boss=mkBoss(node.boss,left+W-200);GS.boss.mini=node.kind==='mini';
+    GS.boss=mkBoss(node.boss,Math.max(cam.x+gameplayViewWidth(),left+W)+220);GS.boss.entrySide=1;GS.boss.mini=node.kind==='mini';
     GS.bossActive=true;GS.state='boss';
     showDialog(node.text||[node.name.toUpperCase(), 'Read the tell. Counter the recovery.'],200);
   } else {
     node.roles.forEach((role,i)=>{
       const fromLeft=i%2===1;
       const column=Math.floor(i/2),lane=i%3;
-      const x=fromLeft?left+65+column*42:left+W-130-column*85;
+      const x=fromLeft?Math.min(cam.x,left)-180-column*90:Math.max(cam.x+gameplayViewWidth(),left+W)+180+column*90;
       const enemy=mkEnemy(role,x,LANE_BACK+12+lane*40);
+      enemy.entrySide=fromLeft?-1:1;enemy.dir=-enemy.entrySide;
       enemy.flankEnabled=i%3===1;enemy.flankCooldown=0;
       GS.enemies.push(enemy);
     });
@@ -244,12 +245,12 @@ function updateCampaignRoute() {
     if(item.revealT>0){item.revealT--;continue;}
     if(!item.hasDrop){item.taken=true;continue;}
     const p=activeParty().find(p=>p.onGround&&!p.downT&&!p.riseT&&Math.abs(p.x-item.x)<30&&Math.abs(p.y-item.y)<22);
-    if(p){item.taken=true;p.hp=Math.min(p.maxHp,p.hp+(item.kind==='medkit'?45:25));p.special=Math.min(p.maxSpecial,p.special+(item.kind==='water'?25:10));spawnTxt(item.x,item.y-48,item.kind.toUpperCase(),'#bfffc8',14);}
+    if(p){item.taken=true;combatSfx('pickup');p.hp=Math.min(p.maxHp,p.hp+(item.kind==='medkit'?45:25));p.special=Math.min(p.maxSpecial,p.special+(item.kind==='water'?25:10));spawnTxt(item.x,item.y-48,item.kind.toUpperCase(),'#bfffc8',14);}
   }
   for(const pickup of GS.pickups) {
     if(pickup.taken)continue;
     if(activeParty().some(p=>p.onGround&&Math.abs(p.x-pickup.x)<48&&Math.abs(p.y-pickup.y)<20)) {
-      pickup.taken=true;
+      pickup.taken=true;combatSfx('recover');
       if(!GS.story.rescues.includes(pickup.id)) {
         GS.story.rescues.push(pickup.id);
         activeParty().forEach(p=>{p.hp=Math.min(p.maxHp,p.hp+30);p.special=Math.min(100,p.special+15);});
@@ -282,6 +283,7 @@ function updateCampaignBoss(b) {
   b.phase=b.profile.final?(b.hp<b.maxHp*.33?3:b.hp<b.maxHp*.67?2:1):(b.hp<b.maxHp*.5?2:1);
   if(b.attack) {
     const a=b.attack;a.elapsed++;
+    if(a.elapsed===a.startup)hostileActionSfx(b,a);
     if(a.jump)b.z=a.elapsed<a.startup?Math.sin(a.elapsed/a.startup*Math.PI)*65:0;
     if(a.elapsed>=a.startup&&a.elapsed<a.startup+a.active) {
       if(a.advance)b.x=clmp(b.x+b.dir*a.advance,GS.arena?.left+35||35,(GS.arena?.right||LEVEL_W)-35);

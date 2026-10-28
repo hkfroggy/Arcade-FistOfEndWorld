@@ -705,4 +705,74 @@ test('Lethal knockdown lands, holds its pose, and respawns in place without rese
  assert.equal(GS.state,'gameover');const deathX=P1.x;
  assert(continueCurrentRun());assert.equal(P1.x,deathX);assert.equal(GS.enemies[0],enemy);assert.equal(GS.nodeIndex,3);
 `);
+test('Shield and Shield Captain cannot block any hero jump attack, including aerial specials',`
+ for(let hero=0;hero<3;hero++)for(const type of ['shield','captain']){
+  resetPlayer(P1,100);P1.charIdx=hero;
+  const e=type==='shield'?mkEnemy('shield',150,GROUND_Y):mkBoss('Shield Captain',150);
+  e.state='idle';e.dir=-1;e.onGround=true;e.stun=0;
+  startPlayerAttack(P1,'punch');assert(shieldBlocks(P1,e));
+  for(const kind of ['jumppunch','jumpkick']){
+   startPlayerAttack(P1,kind);assert(!shieldBlocks(P1,e));
+   const hp=e.hp;hitEnemy(P1,e,10,'#fff');assert.equal(e.hp,hp-10);e.stun=0;
+  }
+  P1.attack=null;P1.kenMove={kind:'spin'};assert(!shieldBlocks(P1,e));
+  P1.kenMove=null;P1.reiMove={kind:'bird'};assert(!shieldBlocks(P1,e));P1.reiMove=null;
+ }
+`);
+test('Heart and Souther guard also take full jump-attack damage',`
+ for(const name of ['Heart','Souther'])for(const kind of ['jumppunch','jumpkick']){
+  resetPlayer(P1,100);const b=mkBoss(name,150);b.dir=-1;b.state='idle';b.introT=0;
+  startPlayerAttack(P1,kind);const hp=b.hp;hitBoss(P1,b,10);assert.equal(b.hp,hp-10);
+ }
+`);
+test('Every boss move and hero special selects generated action audio',`
+ const oldSound=combatSfx,heard=[];combatSfx=kind=>heard.push(kind);
+ for(const move of Object.values(MOVE_LIBRARY)){hostileActionSfx({},move);assert(heard.at(-1));}
+ assert(heard.includes('shotgun'));assert(heard.includes('whip'));assert(heard.includes('explosion'));assert(heard.includes('release'));
+ for(let hero=0;hero<3;hero++){
+  P1.charIdx=hero;
+  for(const kind of ['punch','kick','jumppunch','jumpkick']){startPlayerAttack(P1,kind);assert(hero===1?['rei-hand','rei-dive'].includes(heard.at(-1)):heard.at(-1).endsWith('swish'));}
+  fighterSfx(P1,'release');assert.equal(heard.at(-1),['release','rei-release','toki'][hero]);
+ }
+ combatSfx=oldSound;
+`);
+test('Rei net and bird sounds follow release, dive and landing frames',`
+ const old=combatSfx,heard=[];combatSfx=kind=>heard.push(kind);
+ resetPlayer(P1,100);P1.charIdx=1;P1.special=100;GS.enemies=[];GS.boss=null;GS.supplies=[];
+ P1.reiMove={kind:'net',t:REI_MOVES.netStartup-1,x:P1.x,y:P1.y,dir:1,hits:new Set()};
+ updateReiMove(P1,{},0,1000);assert.deepEqual(heard,['rei-net']);
+ P1.reiMove=null;heard.length=0;updateReiMove(P1,{spinP:true},0,1000);assert.deepEqual(heard,['rei-rise']);
+ for(let n=0;n<REI_MOVES.birdRise+REI_MOVES.birdHover;n++)updateReiMove(P1,{},0,1000);
+ assert(!heard.includes('rei-dive'));updateReiMove(P1,{},0,1000);assert.equal(heard.at(-1),'rei-dive');
+ for(let n=1;n<REI_MOVES.birdDive;n++)updateReiMove(P1,{},0,1000);
+ assert.equal(heard.at(-1),'rei-land');assert(!heard.includes('rei-chop'),'a missed dive has no target impact');
+ combatSfx=old;
+`);
+test('Ken and Rei walking stays still at walls and accounts for depth scale',`
+ for(const hero of [0,1]){
+  resetPlayer(P1,100);P1.charIdx=hero;P1.y=LANE_FRONT;
+  const x=P1.x;updatePlayer(P1,0,{right:true},0,1000);
+  assert(Math.abs(P1.stride-(P1.x-x)/fighterDepthScale(P1.y))<.0001);
+  P1.x=970;const stride=P1.stride;updatePlayer(P1,0,{right:true},0,1000);
+  assert.equal(P1.stride,stride);assert.equal(P1.state,'idle');
+ }
+`);
+test('Shotgun reload sounds once after the final shot and stays quiet during cooldown',`
+ const old=combatSfx,heard=[];combatSfx=k=>heard.push(k);
+ try{
+  for(const boss of [false,true]){
+   heard.length=0;
+   const e=boss?mkBoss('Jagi',350):mkEnemy('gunner',350,GROUND_Y);e.state='idle';
+   if(boss)GS.boss=e;else GS.enemies=[e];
+   updateWeaponEnemy(e);const c=ENEMY_WEAPONS[enemyWeaponKey(e)];
+   const reloadTick=c.startup+(c.shots-1)*c.gap+12;
+   for(let t=1;t<reloadTick;t++)updateWeaponEnemy(e);
+   assert(!heard.includes('reload'));updateWeaponEnemy(e);
+   assert.equal(heard.filter(k=>k==='reload').length,1);
+   while(e.attack)updateWeaponEnemy(e);
+   const count=heard.length;for(let t=0;t<899;t++)updateWeaponEnemy(e);
+   assert.equal(heard.length,count);
+  }
+ }finally{combatSfx=old;}
+`);
 console.log(`${passed} combat checks passed.`);

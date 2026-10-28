@@ -1,0 +1,62 @@
+{
+  "hand": {
+    "source": "rei-hand_00001.flac",
+    "trimStart": 0.3592,
+    "duration": 0.16,
+    "peak": 0.75
+  },
+  "palm": {
+    "source": "rei-palm_00001.flac",
+    "trimStart": 0.0599,
+    "duration": 0.22,
+    "peak": 0.75
+  },
+  "kick": {
+    "source": "rei-kick_00001.flac",
+    "trimStart": 0.015,
+    "duration": 0.32,
+    "peak": 0.75
+  },
+  "chop": {
+    "source": "rei-chop_00001.flac",
+    "trimStart": 0.2943,
+    "duration": 0.32,
+    "peak": 0.75
+  },
+  "net": {
+    "source": "rei-net_00001.flac",
+    "trimStart": 0.439,
+    "duration": 0.4,
+    "peak": 0.75
+  },
+  "rise": {
+    "source": "rei-rise_00001.flac",
+    "trimStart": 0.1596,
+    "duration": 0.4,
+    "peak": 0.6575
+  },
+  "dive": {
+    "source": "rei-dive_00001.flac",
+    "trimStart": 0.1546,
+    "duration": 0.13,
+    "peak": 0.6972
+  },
+  "land": {
+    "source": "rei-land_00001.flac",
+    "trimStart": 0.0,
+    "duration": 0.38,
+    "peak": 0.75
+  },
+  "charge": {
+    "source": "rei-charge_00001.flac",
+    "trimStart": 0.0748,
+    "duration": 0.38,
+    "peak": 0.75
+  },
+  "release": {
+    "source": "rei-release_00001.flac",
+    "trimStart": 0.0599,
+    "duration": 0.65,
+    "peak": 0.75
+  }
+}
