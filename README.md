@@ -106,6 +106,8 @@ The build recreates `dist/`, excludes offline artwork inputs, and converts PNG a
 
 ## Project documentation
 
+- [Game design and AI production](DESIGN-AND-AI-PRODUCTION.md) — detailed design, AI coding workflow, artwork and animation pipeline, local sound generation, and Suno music credits.
+
 - [Level design](LEVEL-DESIGN.md)
 - [Repository guidance](AGENTS.md)
 - [Sound-effect coverage](SFX-PLAN.md)
